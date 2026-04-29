@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KishanSarthi — Smart Agriculture Advisor</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+  <div class="app">
+    <div id="cropContainer"></div>
+    <!-- ── TOPBAR ─────────────────────────────────────────── -->
+    <div class="topbar">
+      <div class="logo-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M12 2C8 6 6 10 7 14c1 4 5 6 5 6s4-2 5-6c1-4-1-8-5-12z" />
+          <line x1="12" y1="14" x2="12" y2="22" />
+        </svg>
+      </div>
+      <div>
+        <div class="topbar-title" id="app-title">KishanSarthi</div>
+        <div class="topbar-sub" id="app-sub">Smart Agriculture Advisor</div>
+      </div>
+      <div class="lang-toggle">
+        <button class="on" onclick="setLang('en',this)">EN</button>
+        <button onclick="setLang('hi',this)">हि</button>
+      </div>
+    </div>
+
+    <!-- ── TAB BAR ────────────────────────────────────────── -->
+    <div class="tab-bar">
+      <button class="tab on" onclick="goPage('home',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+        <span id="t-home">Home</span>
+      </button>
+      <button class="tab" onclick="goPage('advisor',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+        <span id="t-advisor">Advisor</span>
+      </button>
+      <button class="tab" onclick="goPage('prices',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+          <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+          <polyline points="17 6 23 6 23 12" />
+        </svg>
+        <span id="t-prices">Prices</span>
+      </button>
+      <button class="tab" onclick="goPage('weather',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+          <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
+        </svg>
+        <span id="t-weather">Weather</span>
+      </button>
+      <button class="tab" onclick="goPage('chat',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+        </svg>
+        <span id="t-chat">AI Chat</span>
+      </button>
+      <button class="tab" onclick="goPage('newfarmer',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+          <path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z" />
+          <path d="M12 8v4l3 3" />
+        </svg>
+        <span id="t-newfarmer">New Farmer</span>
+      </button>
+      <button class="tab" onclick="goPage('disease',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" />
+          <circle cx="8.5" cy="8.5" r="1.5" />
+          <polyline points="21 15 16 10 5 21" />
+        </svg>
+        <span id="t-disease">Scan Plant</span>
+      </button>
+      <button class="tab" onclick="goPage('schemes',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <path d="M9 22V12h6v10" />
+          <path d="M12 7v2" />
+        </svg>
+        <span id="t-schemes">Schemes</span>
+      </button>
+      <button class="tab" onclick="goPage('mandi',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+          <circle cx="12" cy="10" r="3" />
+        </svg>
+        <span id="t-mandi">Mandi</span>
+      </button>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- HOME PAGE                                           -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div class="page on" id="page-home" style="display:block">
+
+      <div class="hero">
+        <div class="greeting" id="h-greet">🙏 Namaste!</div>
+        <h2 id="h-title">Welcome to KishanSarthi</h2>
+        <p id="h-sub">Your smart AI partner for better farming &amp; higher income</p>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat slide-in" onclick="goPage('advisor',document.querySelectorAll('.tab')[1])">
+          <div class="icon">🌾</div>
+          <div class="val" style="color:var(--green)">Wheat</div>
+          <div class="lbl">Best crop — April</div>
+          <div class="chg up">↑ 92% AI match</div>
+        </div>
+        <div class="stat slide-in" onclick="goPage('prices',document.querySelectorAll('.tab')[2])">
+          <div class="icon">💰</div>
+          <div class="val">₹2,340</div>
+          <div class="lbl">Wheat / quintal</div>
+          <div class="chg up">↑ 4.2% this week</div>
+        </div>
+        <div class="stat slide-in" onclick="goPage('weather',document.querySelectorAll('.tab')[3])">
+          <div class="icon">🌤</div>
+          <div class="val">29°C</div>
+          <div class="lbl">Today's weather</div>
+          <div class="chg flat">Partly cloudy</div>
+        </div>
+        <div class="stat slide-in" onclick="goPage('chat',document.querySelectorAll('.tab')[4])">
+          <div class="icon">🤖</div>
+          <div class="val">Ask AI</div>
+          <div class="lbl">Get instant answers</div>
+          <div class="chg up badge-live">● Live</div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <h3 id="h-tips">Today's AI Tips</h3>
+          <span class="badge up tag">3 alerts</span>
+        </div>
+        <div class="tip g">🌱 Best time to sow <strong>Moong Dal</strong> — soil temp ideal this week. Expect 6–8
+          q/acre.</div>
+        <div class="tip a">⚠️ Aphid alert in your region. Apply neem spray before Wednesday rain.</div>
+        <div class="tip g">💧 Wheat at grain-fill stage — water every 8 days. Do not overwater.</div>
+        <div class="tip r">🌡 Heat wave possible in 10 days — protect nursery seedlings with shade net.</div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <h3>Quick Actions</h3>
+        </div>
+        <div class="action-grid">
+          <button class="btn-next" onclick="goPage('advisor',document.querySelectorAll('.tab')[1])">🌾 Get crop
+            advice</button>
+          <button class="btn-next" style="background:var(--blue)"
+            onclick="goPage('prices',document.querySelectorAll('.tab')[2])">💹 Mandi prices</button>
+          <button class="btn-next" style="background:var(--amber)"
+            onclick="goPage('weather',document.querySelectorAll('.tab')[3])">🌦 See weather</button>
+          <button class="btn-next" style="background:#534AB7"
+            onclick="goPage('chat',document.querySelectorAll('.tab')[4])">🤖 Ask AI</button>
+          <button class="btn-next" style="background:var(--blue);grid-column:span 2"
+            onclick="goPage('newfarmer',document.querySelectorAll('.tab')[5])">🌱 New Farmer Guide — Water, Fertilizer &
+            Care Plan</button>
+          <button class="btn-next" style="background:#6b21a8;grid-column:span 2"
+            onclick="goPage('disease',document.querySelectorAll('.tab')[6])">🔬 Scan Plant — AI Disease
+            Detection</button>
+          <button class="btn-next" style="background:#c2410c;grid-column:span 1"
+            onclick="goPage('schemes',document.querySelectorAll('.tab')[7])">🏛 Govt Schemes</button>
+          <button class="btn-next" style="background:#0f766e;grid-column:span 1"
+            onclick="goPage('mandi',document.querySelectorAll('.tab')[8])">📍 Mandi Locator</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- ADVISOR PAGE                                        -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div class="page" id="page-advisor">
+
+      <!-- WIZARD (id="step-wizard" fixes the showResults() bug) -->
+      <div class="sec" id="step-wizard">
+        <div class="sec-head">
+          <h3>🌾 AI Crop Advisor</h3>
+          <span class="badge up tag">Step <span id="cur-step">1</span>/4</span>
+        </div>
+
+        <div class="step-indicator" id="step-ind">
+          <div class="step-dot active" id="sd0">1</div>
+          <div class="step-line" id="sl0"></div>
+          <div class="step-dot todo" id="sd1">2</div>
+          <div class="step-line" id="sl1"></div>
+          <div class="step-dot todo" id="sd2">3</div>
+          <div class="step-line" id="sl2"></div>
+          <div class="step-dot todo" id="sd3">4</div>
+        </div>
+
+        <!-- Step 0: Location -->
+        <div class="wiz-step on" id="ws0">
+          <span class="wiz-label">🗺 Where is your farm?</span>
+          <div class="wiz-opts">
+            <div class="wiz-opt" onclick="selOpt(this,'state')">Uttar Pradesh</div>
+            <div class="wiz-opt" onclick="selOpt(this,'state')">Punjab</div>
+            <div class="wiz-opt" onclick="selOpt(this,'state')">Haryana</div>
+            <div class="wiz-opt" onclick="selOpt(this,'state')">Rajasthan</div>
+            <div class="wiz-opt" onclick="selOpt(this,'state')">Bihar</div>
+            <div class="wiz-opt" onclick="selOpt(this,'state')">Madhya Pradesh</div>
+            <div class="wiz-opt" onclick="selOpt(this,'state')">Maharashtra</div>
+            <div class="wiz-opt" onclick="selOpt(this,'state')">Gujarat</div>
+          </div>
+          <div class="wiz-row">
+            <button class="btn-next" id="n0" disabled onclick="nextStep(0)">Next →</button>
+          </div>
+        </div>
+
+        <!-- Step 1: Season + Soil -->
+        <div class="wiz-step" id="ws1">
+          <span class="wiz-label">📅 Which season are you planting for?</span>
+          <div class="wiz-opts">
+            <div class="wiz-opt" onclick="selOpt(this,'season')">Kharif (June–Oct)</div>
+            <div class="wiz-opt" onclick="selOpt(this,'season')">Rabi (Oct–Mar)</div>
+            <div class="wiz-opt" onclick="selOpt(this,'season')">Zaid (Mar–June)</div>
+          </div>
+          <span class="wiz-label">🌍 Soil type?</span>
+          <div class="wiz-opts">
+            <div class="wiz-opt" onclick="selOpt(this,'soil')">Alluvial (Domat)</div>
+            <div class="wiz-opt" onclick="selOpt(this,'soil')">Black (Kali Mitti)</div>
+            <div class="wiz-opt" onclick="selOpt(this,'soil')">Red &amp; Laterite</div>
+            <div class="wiz-opt" onclick="selOpt(this,'soil')">Sandy (Balu)</div>
+          </div>
+          <div class="wiz-row">
+            <button class="btn-back" onclick="prevStep(1)">← Back</button>
+            <button class="btn-next" id="n1" disabled onclick="nextStep(1)">Next →</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Water + Budget -->
+        <div class="wiz-step" id="ws2">
+          <span class="wiz-label">💧 Water source?</span>
+          <div class="wiz-opts">
+            <div class="wiz-opt" onclick="selOpt(this,'water')">Canal</div>
+            <div class="wiz-opt" onclick="selOpt(this,'water')">Borewell</div>
+            <div class="wiz-opt" onclick="selOpt(this,'water')">Rain-fed</div>
+            <div class="wiz-opt" onclick="selOpt(this,'water')">River / Pond</div>
+          </div>
+          <span class="wiz-label">💰 Budget for farming?</span>
+          <div class="wiz-opts">
+            <div class="wiz-opt" onclick="selOpt(this,'budget')">Under ₹10K</div>
+            <div class="wiz-opt" onclick="selOpt(this,'budget')">₹10K–₹50K</div>
+            <div class="wiz-opt" onclick="selOpt(this,'budget')">₹50K–₹1L</div>
+            <div class="wiz-opt" onclick="selOpt(this,'budget')">Above ₹1L</div>
+          </div>
+          <div class="wiz-row">
+            <button class="btn-back" onclick="prevStep(2)">← Back</button>
+            <button class="btn-next" id="n2" disabled onclick="nextStep(2)">Next →</button>
+          </div>
+        </div>
+
+        <!-- Step 3: Land + Goal -->
+        <div class="wiz-step" id="ws3">
+          <span class="wiz-label">📐 Land size (acres)?</span>
+          <div
+            style="display:flex;align-items:center;gap:12px;margin-bottom:16px;background:var(--card2);padding:12px;border-radius:10px">
+            <input type="range" min="1" max="50" value="5" step="1" id="land-slider" title="Land size in acres"
+              aria-label="Land size in acres"
+              oninput="document.getElementById('land-out').textContent=this.value+' acres'" style="flex:1">
+            <span style="font-size:18px;font-weight:600;min-width:64px;color:var(--text);letter-spacing:-.3px"
+              id="land-out">5 acres</span>
+          </div>
+          <span class="wiz-label">🎯 Your main goal?</span>
+          <div class="wiz-opts">
+            <div class="wiz-opt" onclick="selOpt(this,'goal')">Max profit</div>
+            <div class="wiz-opt" onclick="selOpt(this,'goal')">Low risk</div>
+            <div class="wiz-opt" onclick="selOpt(this,'goal')">Export quality</div>
+            <div class="wiz-opt" onclick="selOpt(this,'goal')">Quick harvest</div>
+          </div>
+          <div class="wiz-row">
+            <button class="btn-back" onclick="prevStep(3)">← Back</button>
+            <button class="btn-next" id="n3" disabled onclick="showResults()">🔍 Analyse now</button>
+          </div>
+        </div>
+      </div><!-- /#step-wizard -->
+
+      <!-- RESULTS SECTION -->
+      <div id="results-section" style="display:none">
+
+        <!-- AI loading state -->
+        <div id="advisor-loading" class="ai-loading" style="display:none;margin-bottom:12px">
+          <div class="spinner"></div>
+          <span>KisanAI is analysing your farm conditions…</span>
+        </div>
+
+        <div id="advisor-output" style="display:none">
+          <div class="result-hero slide-in">
+            <div class="res-label" id="res-label">AI Analysis</div>
+            <div class="big" id="res-top-crop">🌾 Wheat</div>
+            <div class="sub" id="res-sub">Top recommended crop for your conditions</div>
+          </div>
+
+          <div class="sec slide-in">
+            <div class="sec-head">
+              <h3>Recommended Crops</h3><span class="badge up tag">AI ranked</span>
+            </div>
+            <div id="crop-results"></div>
+          </div>
+
+          <div class="sec slide-in">
+            <div class="sec-head">
+              <h3>Estimated Earnings</h3>
+            </div>
+            <canvas id="earn-chart" height="145"></canvas>
+          </div>
+
+          <div class="sec slide-in">
+            <div class="sec-head">
+              <h3>Farming Calendar</h3>
+            </div>
+            <div id="farm-calendar"></div>
+          </div>
+
+          <div class="sec slide-in" id="ai-tips-sec" style="display:none">
+            <div class="sec-head">
+              <h3>🤖 AI Tips for Your Conditions</h3>
+            </div>
+            <div id="ai-tips-list"></div>
+          </div>
+        </div>
+
+        <button class="btn-next btn-full" onclick="resetAdvisor()">← Analyse again</button>
+      </div>
+
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- PRICES PAGE                                         -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div class="page" id="page-prices">
+      <div class="filter-row">
+        <div class="fchip on" onclick="filterCat('all',this)">All crops</div>
+        <div class="fchip" onclick="filterCat('grain',this)">Grains</div>
+        <div class="fchip" onclick="filterCat('pulse',this)">Pulses</div>
+        <div class="fchip" onclick="filterCat('veg',this)">Vegetables</div>
+        <div class="fchip" onclick="filterCat('oil',this)">Oilseeds</div>
+        <div class="fchip" onclick="filterCat('cash',this)">Cash crops</div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <h3>Live Mandi Prices — April 2026</h3>
+          <span class="badge up tag badge-live">● Live</span>
+        </div>
+        <div id="price-list"></div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <h3>Price Trend Forecast</h3>
+        </div>
+        <canvas id="price-chart" height="155"></canvas>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <h3>AI Price Predictor</h3>
+        </div>
+        <span class="wiz-label" style="font-size:13px;color:var(--text2);display:block;margin-bottom:8px">Pick a crop to
+          forecast:</span>
+        <div class="wiz-opts" id="pred-opts">
+          <div class="wiz-opt"
+            onclick="selPred(this,'Wheat','₹2,340','₹2,480','May 25','MSP ₹2,275 — current price is above MSP, good time to sell.')">
+            Wheat</div>
+          <div class="wiz-opt"
+            onclick="selPred(this,'Moong Dal','₹7,240','₹8,100','Jul 10','High demand before monsoon — hold if you have storage.')">
+            Moong Dal</div>
+          <div class="wiz-opt"
+            onclick="selPred(this,'Mustard','₹5,650','₹6,100','Jun 15','Dip expected in May — wait for the June rally.')">
+            Mustard</div>
+          <div class="wiz-opt"
+            onclick="selPred(this,'Paddy','₹2,015','₹2,200','Oct 20','Store after harvest — prices rise ~10% post-harvest.')">
+            Paddy</div>
+        </div>
+        <div id="pred-result" style="display:none;margin-top:10px"></div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- WEATHER PAGE                                        -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div class="page" id="page-weather">
+
+      <div class="sec">
+        <div class="sec-head">
+          <h3>Greater Noida, UP</h3>
+          <span style="font-size:12px;color:var(--text2)">Updated just now</span>
+        </div>
+        <div class="w-row">
+          <div class="w-cell">
+            <div class="w-ico">🌤</div>
+            <div class="w-val">28°C</div>
+            <div class="w-lbl">Temperature</div>
+          </div>
+          <div class="w-cell">
+            <div class="w-ico">💧</div>
+            <div class="w-val">65%</div>
+            <div class="w-lbl">Humidity</div>
+          </div>
+          <div class="w-cell">
+            <div class="w-ico">🌬</div>
+            <div class="w-val">12 km/h</div>
+            <div class="w-lbl">Wind</div>
+          </div>
+        </div>
+        <div class="day-row">
+          <div class="day-cell today">
+            <div class="day-nm">Today</div>
+            <div class="day-ico">🌤</div>
+            <div class="day-tmp">28°</div>
+          </div>
+          <div class="day-cell">
+            <div class="day-nm">Tue</div>
+            <div class="day-ico">⛅</div>
+            <div class="day-tmp">27°</div>
+          </div>
+          <div class="day-cell">
+            <div class="day-nm">Wed</div>
+            <div class="day-ico">🌧</div>
+            <div class="day-tmp">24°</div>
+          </div>
+          <div class="day-cell">
+            <div class="day-nm">Thu</div>
+            <div class="day-ico">🌧</div>
+            <div class="day-tmp">23°</div>
+          </div>
+          <div class="day-cell">
+            <div class="day-nm">Fri</div>
+            <div class="day-ico">☀️</div>
+            <div class="day-tmp">30°</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <h3>Soil Health Monitor</h3><span class="badge up tag">Good</span>
+        </div>
+        <div class="npk-row">
+          <div class="npk-head"><span>Soil Moisture</span><span style="color:var(--green);font-weight:600">68% —
+              Good</span></div>
+          <div class="npk-bar">
+            <div class="npk-fill" style="width:68%;background:var(--green)"></div>
+          </div>
+        </div>
+        <div class="npk-row">
+          <div class="npk-head"><span>Nitrogen (N)</span><span style="color:var(--blue);font-weight:600">55% —
+              Medium</span></div>
+          <div class="npk-bar">
+            <div class="npk-fill" style="width:55%;background:var(--blue)"></div>
+          </div>
+        </div>
+        <div class="npk-row">
+          <div class="npk-head"><span>Phosphorus (P)</span><span style="color:var(--amber);font-weight:600">72% —
+              Good</span></div>
+          <div class="npk-bar">
+            <div class="npk-fill" style="width:72%;background:var(--amber)"></div>
+          </div>
+        </div>
+        <div class="npk-row">
+          <div class="npk-head"><span>Potassium (K)</span><span style="color:var(--red);font-weight:600">28% — Add
+              fertiliser!</span></div>
+          <div class="npk-bar">
+            <div class="npk-fill" style="width:28%;background:var(--red)"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <h3>Weather Impact on Your Crops</h3>
+        </div>
+        <div class="tip g">✅ <strong>Wheat:</strong> Grain-fill stage — conditions ideal. Maintain 8-day irrigation
+          cycle.</div>
+        <div class="tip a">⚠️ <strong>Rain Wed–Thu:</strong> Delay pesticide spray by 2 days for full effectiveness.
+        </div>
+        <div class="tip g">🌱 <strong>Moong Dal:</strong> Post-rain Friday is perfect for sowing. Temperature ideal.
+        </div>
+        <div class="tip r">🌡 <strong>Heat alert in 10 days:</strong> Cover young seedlings with shade net in afternoon.
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- CHAT PAGE                                           -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div class="page" id="page-chat">
+      <div class="sec">
+        <div class="sec-head">
+          <h3>Ask KisanAI</h3>
+          <span class="badge up tag badge-live">● AI Ready</span>
+        </div>
+
+        <div class="quick-wrap">
+          <button class="qbtn" onclick="qAsk('Best crop for June in UP?')">🌱 June crop?</button>
+          <button class="qbtn" onclick="qAsk('How to control aphids on wheat?')">🐛 Aphid control?</button>
+          <button class="qbtn" onclick="qAsk('When to apply urea fertilizer?')">🧪 Urea timing?</button>
+          <button class="qbtn" onclick="qAsk('Wheat price forecast next month?')">📈 Price forecast?</button>
+          <button class="qbtn" onclick="qAsk('How much water does paddy need?')">💧 Paddy water?</button>
+          <button class="qbtn" onclick="qAsk('Government schemes for farmers 2026?')">🏛 Govt schemes?</button>
+          <button class="qbtn" onclick="qAsk('What fertilizer for black soil mustard?')">🌻 Mustard fertilizer?</button>
+          <button class="qbtn" onclick="qAsk('Best time to sell wheat this year?')">💰 Sell timing?</button>
+        </div>
+
+        <div class="chat-area" id="chat-area">
+          <div class="msg bot">Namaste! 🙏 I'm KisanAI — your smart farming assistant powered by AI. Ask me anything
+            about crops, prices, weather, fertilizers, pest control, or government schemes. I give practical advice in
+            simple language!</div>
+        </div>
+
+        <div class="inp-row">
+          <input type="text" id="chat-inp" placeholder="Type your farming question…"
+            onkeydown="if(event.key==='Enter')doChat()">
+          <button class="send-btn" id="send-btn" onclick="doChat()" title="Send message" aria-label="Send message">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- NEW FARMER TOOL PAGE (v7 upgrade)                  -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div class="page" id="page-newfarmer">
+      <div class="sec">
+        <div class="sec-head">
+          <h3>🌱 New Farmer Tool</h3>
+          <span class="badge" style="background:var(--blue-light);color:var(--blue)">AI Powered</span>
+        </div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6">Complete farming guide for
+          beginners — personalized weekly schedule, water plan, fertilizer advice, and pest management.</p>
+
+        <div id="nf-selector">
+          <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px">1️⃣ Choose your crop:</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px" id="nf-crop-grid">
+            <div class="nf-crop-btn" onclick="selNFCrop(this,'Rice','🍚')"><span class="emo">🍚</span><span
+                class="nm">Rice</span></div>
+            <div class="nf-crop-btn" onclick="selNFCrop(this,'Wheat','🌾')"><span class="emo">🌾</span><span
+                class="nm">Wheat</span></div>
+            <div class="nf-crop-btn" onclick="selNFCrop(this,'Maize','🌽')"><span class="emo">🌽</span><span
+                class="nm">Maize</span></div>
+            <div class="nf-crop-btn" onclick="selNFCrop(this,'Tomato','🍅')"><span class="emo">🍅</span><span
+                class="nm">Tomato</span></div>
+            <div class="nf-crop-btn" onclick="selNFCrop(this,'Potato','🥔')"><span class="emo">🥔</span><span
+                class="nm">Potato</span></div>
+            <div class="nf-crop-btn" onclick="selNFCrop(this,'Cotton','🌿')"><span class="emo">🌿</span><span
+                class="nm">Cotton</span></div>
+            <div class="nf-crop-btn" onclick="selNFCrop(this,'Sugarcane','🎋')"><span class="emo">🎋</span><span
+                class="nm">Sugarcane</span></div>
+            <div class="nf-crop-btn" onclick="selNFCrop(this,'Onion','🧅')"><span class="emo">🧅</span><span
+                class="nm">Onion</span></div>
+            <div class="nf-crop-btn" onclick="selNFCrop(this,'Mustard','🌼')"><span class="emo">🌼</span><span
+                class="nm">Mustard</span></div>
+          </div>
+
+          <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px">2️⃣ Land size:</div>
+          <div style="margin-bottom:14px">
+            <div
+              style="display:flex;justify-content:space-between;font-size:13px;color:var(--text2);margin-bottom:6px;font-weight:500">
+              Acres: <span id="nf-acres-lbl" style="color:var(--blue);font-weight:600">3 acres</span></div>
+            <input type="range" min="0.5" max="20" step="0.5" value="3" id="nf-acres" title="Farm size in acres"
+              aria-label="Farm size in acres"
+              oninput="document.getElementById('nf-acres-lbl').textContent=this.value+' acres'">
+          </div>
+
+          <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px">3️⃣ Irrigation:</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:16px">
+            <div class="nf-crop-btn" id="irr-canal" onclick="selIrr(this,'canal')"><span class="emo"
+                style="font-size:18px">🌊</span><span class="nm">Canal</span></div>
+            <div class="nf-crop-btn" id="irr-bore" onclick="selIrr(this,'bore')"><span class="emo"
+                style="font-size:18px">⛽</span><span class="nm">Borewell</span></div>
+            <div class="nf-crop-btn" id="irr-rain" onclick="selIrr(this,'rain')"><span class="emo"
+                style="font-size:18px">🌧</span><span class="nm">Rain-fed</span></div>
+          </div>
+
+          <button class="btn-next btn-full" id="nf-generate-btn" disabled onclick="generateFarmerPlan()"
+            style="background:var(--blue)">
+            🌱 Generate My Farming Plan
+          </button>
+        </div>
+      </div>
+
+      <!-- Plan Output -->
+      <div id="nf-plan" style="display:none">
+        <div id="nf-loading" class="ai-loading"
+          style="display:none;background:var(--blue-light);border-color:#a8c8f0;color:#0d3a6b">
+          <div class="spinner" style="border-top-color:var(--blue)"></div>
+          Generating your personalized farming plan…
+        </div>
+        <div id="nf-output" style="display:none"></div>
+        <button class="btn-next btn-full" style="background:var(--blue);margin-top:4px" onclick="resetNFGuide()">←
+          Generate New Plan</button>
+      </div>
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- SCAN PLANT PAGE (v7 AI Vision upgrade)             -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div class="page" id="page-disease">
+      <div class="sec">
+        <div class="sec-head">
+          <h3>📷 AI Plant Disease Scan</h3>
+          <span class="badge" style="background:var(--pur-light);color:var(--pur)">Vision AI</span>
+        </div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.6">Take or upload a clear photo of
+          your plant's leaf/stem/fruit. Our AI will identify diseases, symptoms, and recommend treatments.</p>
+
+        <div id="dd-dropzone">
+          <input type="file" accept="image/*" capture="environment" title="Upload plant image"
+            aria-label="Upload plant image" onchange="handleImageUpload(this)">
+          <div class="dd-icon">🌿</div>
+          <h4>Upload Plant Photo</h4>
+          <p>Tap to take photo or choose from gallery<br>Works with leaves, stems, fruits &amp; roots</p>
+        </div>
+
+        <img id="dd-preview" src="" alt="Plant preview">
+
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <button class="btn-scan" id="scan-btn" onclick="runScan()" style="display:none">🔬 Scan for Diseases</button>
+        </div>
+
+        <!-- Demo quick scan options -->
+        <div style="margin-bottom:4px">
+          <div
+            style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px">
+            Or try a demo scan:</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+            <button class="fchip" onclick="demoScan('wheat_rust')">🌾 Wheat Rust</button>
+            <button class="fchip" onclick="demoScan('rice_blast')">🍚 Rice Blast</button>
+            <button class="fchip" onclick="demoScan('tomato_blight')">🍅 Tomato Blight</button>
+            <button class="fchip" onclick="demoScan('healthy')">✅ Healthy Plant</button>
+            <button class="fchip" onclick="demoScan('cotton_wilt')">🌿 Cotton Wilt</button>
+            <button class="fchip" onclick="demoScan('mango_anthracnose')">🥭 Mango Anthracnose</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scan Results -->
+      <div id="scan-results" style="display:none">
+        <div id="scan-loading" class="ai-loading"
+          style="display:none;background:var(--pur-light);border-color:#b37feb;color:#22075e">
+          <div class="spinner" style="border-top-color:var(--pur)"></div>
+          Scanning plant image with AI…
+        </div>
+        <div id="scan-output" style="display:none"></div>
+        <button class="btn-next btn-full" style="background:var(--pur);margin-top:4px" onclick="resetScan()">← Scan
+          Another Plant</button>
+      </div>
+    </div>
+
+  <!-- ════════════════════════════════════════════════════ -->
+  <!-- GOVERNMENT SCHEMES PAGE                            -->
+  <!-- ════════════════════════════════════════════════════ -->
+  <div style="display:none" id="page-schemes" class="page">
+
+    <div class="hero" style="background:linear-gradient(135deg,#c2410c 0%,#7c2d12 100%)">
+      <div class="greeting">🏛 Sarkari Yojana</div>
+      <h2 id="sc-hero-title">Government Scheme Checker</h2>
+      <p style="color:#fed7aa" id="sc-hero-sub">Answer a few questions and find all schemes you qualify for!</p>
+    </div>
+
+    <!-- ELIGIBILITY FORM -->
+    <div class="sec" id="sc-form-section">
+      <div class="sec-head">
+        <h3 id="sc-check-title">🔍 Check Your Eligibility</h3>
+        <span class="badge" style="background:#fff3e0;color:#c2410c" id="sc-step-badge">Step 1 of 4</span>
+      </div>
+
+      <!-- Q1: State -->
+      <div id="scq1" class="sc-q-block">
+        <span class="wiz-label" id="sc-q1-lbl">🗺 Your state?</span>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px" id="sc-state-opts">
+          <div class="scheme-q-opt" onclick="scSel(this,'scState')">Uttar Pradesh</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scState')">Punjab</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scState')">Haryana</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scState')">Rajasthan</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scState')">Bihar</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scState')">Madhya Pradesh</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scState')">Maharashtra</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scState')">Gujarat</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scState')">Karnataka</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scState')">Andhra Pradesh</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scState')">Tamil Nadu</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scState')">Other State</div>
+        </div>
+      </div>
+
+      <!-- Q2: Land -->
+      <div id="scq2" class="sc-q-block">
+        <span class="wiz-label" id="sc-q2-lbl">📐 How much land do you own?</span>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">
+          <div class="scheme-q-opt" onclick="scSel(this,'scLand')">Less than 1 acre (Small/Marginal)</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scLand')">1–2 acres (Marginal)</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scLand')">2–5 acres (Small)</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scLand')">More than 5 acres (Medium/Large)</div>
+        </div>
+      </div>
+
+      <!-- Q3: Category -->
+      <div id="scq3" class="sc-q-block">
+        <span class="wiz-label" id="sc-q3-lbl">👤 Your category?</span>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">
+          <div class="scheme-q-opt" onclick="scSel(this,'scCat')">General</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scCat')">SC / ST</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scCat')">OBC</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scCat')">Women Farmer</div>
+        </div>
+      </div>
+
+      <!-- Q4: Crops -->
+      <div id="scq4" class="sc-q-block">
+        <span class="wiz-label" id="sc-q4-lbl">🌾 What do you grow?</span>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">
+          <div class="scheme-q-opt" onclick="scSel(this,'scCrop')">Food Grains (Wheat/Rice)</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scCrop')">Pulses / Oilseeds</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scCrop')">Vegetables / Fruits</div>
+          <div class="scheme-q-opt" onclick="scSel(this,'scCrop')">Cotton / Sugarcane</div>
+        </div>
+      </div>
+
+      <button class="btn-next btn-full" id="sc-check-btn" onclick="checkSchemes()" style="background:#c2410c" disabled>
+        <span id="sc-check-btn-txt">🏛 Check My Eligible Schemes</span>
+      </button>
+    </div>
+
+    <!-- LOADING -->
+    <div id="sc-loading" class="ai-loading"
+      style="display:none;margin-bottom:12px;background:#fff3e0;border-color:#fed7aa">
+      <div class="spinner" style="border-top-color:#c2410c"></div>
+      <span style="color:#7c2d12" id="sc-loading-text">Checking all 20+ government schemes for you…</span>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="sc-results" style="display:none">
+      <div
+        style="background:linear-gradient(135deg,#c2410c,#7c2d12);border-radius:14px;padding:18px;margin-bottom:12px;text-align:center;box-shadow:0 4px 20px rgba(194,65,12,.25)">
+        <div style="font-size:12px;color:#fed7aa;letter-spacing:.3px;text-transform:uppercase;margin-bottom:6px"
+          id="sc-res-label">Eligible Schemes Found</div>
+        <div style="font-size:36px;font-weight:700;color:#fff" id="sc-res-count">—</div>
+        <div style="font-size:13px;color:#fed7aa;margin-top:4px" id="sc-res-sub">government schemes match your profile
+        </div>
+      </div>
+      <div id="sc-scheme-list"></div>
+      <button class="btn-next btn-full" onclick="resetSchemes()" style="background:#c2410c;margin-top:4px"
+        id="sc-check-again">← Check Again</button>
+    </div>
+
+  </div>
+
+  <!-- ════════════════════════════════════════════════════ -->
+  <!-- MANDI LOCATOR PAGE                                  -->
+  <!-- ════════════════════════════════════════════════════ -->
+  <div style="display:none" id="page-mandi" class="page">
+
+    <div class="hero" style="background:linear-gradient(135deg,#0f766e 0%,#064e3b 100%)">
+      <div class="greeting">📍 APMC Locator</div>
+      <h2 id="mn-hero-title">Nearest Mandi Finder</h2>
+      <p style="color:#99f6e4" id="mn-hero-sub">Find APMC mandis near you by state, district & area to get the best
+        price!</p>
+    </div>
+
+    <div class="sec">
+      <div class="sec-head">
+        <h3 id="mn-select-title">🗺 Select Your Location</h3>
+      </div>
+
+      <span class="wiz-label" id="mn-state-lbl">State</span>
+      <select class="mandi-select" id="mn-state" onchange="loadMandiDistricts()">
+        <option value="">-- Select State --</option>
+        <option>Uttar Pradesh</option>
+        <option>Punjab</option>
+        <option>Haryana</option>
+        <option>Rajasthan</option>
+        <option>Bihar</option>
+        <option>Madhya Pradesh</option>
+        <option>Maharashtra</option>
+        <option>Gujarat</option>
+        <option>Karnataka</option>
+        <option>Andhra Pradesh</option>
+        <option>Tamil Nadu</option>
+        <option>West Bengal</option>
+        <option>Telangana</option>
+        <option>Odisha</option>
+      </select>
+
+      <span class="wiz-label" id="mn-dist-lbl">District</span>
+      <select class="mandi-select" id="mn-district" onchange="loadMandiAreas()" disabled>
+        <option value="">-- Select District --</option>
+      </select>
+
+      <span class="wiz-label" id="mn-area-lbl">Area / Block (optional)</span>
+      <select class="mandi-select" id="mn-area" disabled>
+        <option value="">-- Select Area --</option>
+      </select>
+
+      <button class="btn-next btn-full" id="mn-find-btn" onclick="findMandis()" style="background:#0f766e" disabled>
+        <span id="mn-find-btn-txt">📍 Find Nearest Mandis</span>
+      </button>
+    </div>
+
+    <!-- LOADING -->
+    <div id="mn-loading" class="ai-loading"
+      style="display:none;margin-bottom:12px;background:#ccfbf1;border-color:#5eead4">
+      <div class="spinner" style="border-top-color:#0f766e"></div>
+      <span style="color:#064e3b" id="mn-loading-text">Finding APMC mandis near you…</span>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="mn-results" style="display:none">
+      <div class="sec">
+        <div class="sec-head">
+          <h3 id="mn-res-title">Nearby APMC Mandis</h3>
+          <span class="badge" style="background:#ccfbf1;color:#0f766e" id="mn-res-badge">Showing results</span>
+        </div>
+        <div id="mn-mandi-list"></div>
+      </div>
+
+      <div class="sec" id="mn-tips-sec">
+        <div class="sec-head">
+          <h3 id="mn-tips-title">💡 Mandi Tips</h3>
+        </div>
+        <div class="tip g" id="mn-tip1">✅ <strong>Carry all documents:</strong> Aadhaar, land papers, and bank passbook
+          for smooth transactions.</div>
+        <div class="tip a" id="mn-tip2">⚠️ <strong>Best time to sell:</strong> Arrive early (6–9 AM) for better price
+          discovery and fresh assessment.</div>
+        <div class="tip g" id="mn-tip3">💰 <strong>Check MSP first:</strong> Know today's MSP before going to ensure you
+          don't sell below minimum price.</div>
+      </div>
+
+      <button class="btn-next btn-full" onclick="resetMandi()" style="background:#0f766e;margin-top:4px"
+        id="mn-search-again">← Search Again</button>
+    </div>
+
+  </div>
+
+  </div><!-- /.app -->
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
