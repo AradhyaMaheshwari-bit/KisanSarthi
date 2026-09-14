@@ -310,21 +310,38 @@ window.onload = function() {
       greet:'🙏 Namaste!',heroTitle:'Welcome to KisanSarthi',
       heroSub:'Your smart AI partner for better farming & higher income',
       tips:"Today's AI Tips",
-      // Home static
-      bestCropLabel:'Best crop — April',bestCropChg:'↑ 92% AI match',
-      wheatPriceLabel:'Wheat / quintal',wheatPriceChg:'↑ 4.2% this week',
-      weatherLabel:"Today's weather",weatherChg:'Partly cloudy',
-      askAI:'Ask AI',askAILabel:'Get instant answers',askAIBadge:'● Live',
+      // Home — crop calendar
+      cropCalendarTitle:'What Can I Plant Now?',
+      cropCalendarCurrent:'Current season:',
+      cropCalendarKharif:'Kharif (Monsoon)',
+      cropCalendarRabi:'Rabi (Winter)',
+      cropCalendarZaid:'Zaid (Summer)',
+      cropCalendarPlantable:'Plantable now',
+      cropCalendarNextSeason:'Upcoming:',
+      cropCalendarNoData:'Crop calendar covers 6 major crops with economic data.',
+      cropCalendarAskAI:'Ask AI →',
+      // Home — market highlights
+      marketHighlightsTitle:'Market Highlights',
+      marketHighlightsTopGainer:'Top Gainer',
+      marketHighlightsTopLoser:'Top Loser',
+      marketHighlightsMostVolatile:'Most Volatile',
+      marketHighlightsMostStable:'Most Stable',
+      marketHighlightsPrices30d:'30-day price change',
+      // Home — data freshness
+      dataFreshnessTitle:'Data Freshness',
+      dataFreshnessCurrent:'Current',
+      dataFreshnessStale:'Stale',
+      dataFreshnessHistorical:'Historical',
+      dataFreshnessNote:'Prices shown are the latest available from APMC datasets. Not real-time.',
+      dataFreshnessCropsTracked:'crops tracked',
+      dataFreshnessLatestDate:'Latest data:',
+      dataFreshnessReliability:'Market data coverage:',
+      // Home — quick actions
       quickActions:'Quick Actions',
       qCropAdvice:'🌾 Get crop advice',qMandiPrices:'💹 Mandi prices',qWeather:'🌦 See weather',qAskAI:'🤖 Ask AI',
       qNewFarmer:'🌱 New Farmer Guide — Water, Fertilizer & Care Plan',
       qDisease:'🔬 Scan Plant — AI Disease Detection',
       qSchemes:'🏛 Govt Schemes',qMandiLocator:'📍 Mandi Locator',
-      todayTip1:'🌱 Best time to sow <strong>Moong Dal</strong> — soil temp ideal this week. Expect 6–8 q/acre.',
-      todayTip2:'⚠️ Aphid alert in your region. Apply neem spray before Wednesday rain.',
-      todayTip3:'💧 Wheat at grain-fill stage — water every 8 days. Do not overwater.',
-      todayTip4:'🌡 Heat wave possible in 10 days — protect nursery seedlings with shade net.',
-      tipAlerts:'3 alerts',
       // Prices page
       allCrops:'All crops',grains:'Grains',pulses:'Pulses',vegetables:'Vegetables',oilseeds:'Oilseeds',cashCrops:'Cash crops',
       livePricesTitle:'Live Mandi Prices — April 2026',priceTrendTitle:'Price Trend Forecast',aiPredTitle:'AI Price Predictor',
@@ -395,22 +412,38 @@ window.onload = function() {
       greet:'🙏 नमस्ते!',heroTitle:'किसान सारथी में आपका स्वागत है',
       heroSub:'बेहतर खेती और ज़्यादा कमाई के लिए आपका AI साथी',
       tips:'आज की AI सलाह',
-      // Home static
-     
-      bestCropLabel:'सर्वश्रेष्ठ फसल — अप्रैल',bestCropChg:'↑ 92% AI मिलान',
-      wheatPriceLabel:'गेहूं / क्विंटल',wheatPriceChg:'↑ 4.2% इस हफ्ते',
-      weatherLabel:'आज का मौसम',weatherChg:'आंशिक बादल',
-      askAI:'AI से पूछें',askAILabel:'तुरंत जवाब पाएं',askAIBadge:'● लाइव',
+      // Home — crop calendar
+      cropCalendarTitle:'अब क्या बोएं?',
+      cropCalendarCurrent:'वर्तमान सीज़न:',
+      cropCalendarKharif:'खरीफ (मानसून)',
+      cropCalendarRabi:'रबी (सर्दी)',
+      cropCalendarZaid:'ज़ायद (गर्मी)',
+      cropCalendarPlantable:'अब बो सकते हैं',
+      cropCalendarNextSeason:'आने वाला:',
+      cropCalendarNoData:'फसल कैलेंडर में 6 प्रमुख फसलें हैं।',
+      cropCalendarAskAI:'AI से पूछें →',
+      // Home — market highlights
+      marketHighlightsTitle:'बाज़ार हाइलाइट्स',
+      marketHighlightsTopGainer:'सबसे ज़्यादा बढ़ने वाली',
+      marketHighlightsTopLoser:'सबसे ज़्यादा गिरने वाली',
+      marketHighlightsMostVolatile:'सबसे अस्थिर',
+      marketHighlightsMostStable:'सबसे स्थिर',
+      marketHighlightsPrices30d:'30 दिन का भाव बदलाव',
+      // Home — data freshness
+      dataFreshnessTitle:'डेटा ताज़गी',
+      dataFreshnessCurrent:'ताज़ा',
+      dataFreshnessStale:'पुराना',
+      dataFreshnessHistorical:'ऐतिहासिक',
+      dataFreshnessNote:'दिखाए गए भाव APMC डेटासेट से उपलब्ध नवीनतम हैं। लाइव नहीं हैं।',
+      dataFreshnessCropsTracked:'फसलें ट्रैक की गईं',
+      dataFreshnessLatestDate:'नवीनतम डेटा:',
+      dataFreshnessReliability:'बाज़ार डेटा कवरेज:',
+      // Home — quick actions
       quickActions:'त्वरित कार्य',
       qCropAdvice:'🌾 फसल सलाह लें',qMandiPrices:'💹 मंडी भाव',qWeather:'🌦 मौसम देखें',qAskAI:'🤖 AI से पूछें',
       qNewFarmer:'🌱 नया किसान गाइड — सिंचाई, खाद और देखभाल',
       qDisease:'🔬 पौधा जांचें — AI रोग पहचान',
       qSchemes:'🏛 सरकारी योजनाएं',qMandiLocator:'📍 मंडी खोजें',
-      todayTip1:'🌱 <strong>मूंग दाल</strong> बोने का सबसे अच्छा समय — इस हफ्ते मिट्टी का तापमान आदर्श है। 6-8 क्विंटल/एकड़ की उम्मीद।',
-      todayTip2:'⚠️ आपके क्षेत्र में माहू का प्रकोप। बुधवार की बारिश से पहले नीम का स्प्रे करें।',
-      todayTip3:'💧 गेहूं दाने भरने की अवस्था में है — हर 8 दिन में पानी दें। अधिक पानी न दें।',
-      todayTip4:'🌡 10 दिनों में गर्मी की लहर संभव — दोपहर में शेड नेट से नर्सरी की रक्षा करें।',
-      tipAlerts:'3 अलर्ट',
       // Prices page
       allCrops:'सभी फसलें',grains:'अनाज',pulses:'दालें',vegetables:'सब्जियां',oilseeds:'तिलहन',cashCrops:'नकद फसलें',
       livePricesTitle:'लाइव मंडी भाव — अप्रैल 2026',priceTrendTitle:'भाव पूर्वानुमान',aiPredTitle:'AI भाव पूर्वानुमान',
@@ -496,22 +529,14 @@ window.onload = function() {
     });
   
     // ── Home page ─────────────────────────────────────────
-    txt('h-greet','greet'); txt('h-title','heroTitle'); txt('h-sub','heroSub'); txt('h-tips','tips');
-    // stats
-    const statEls=document.querySelectorAll('.stat');
-    if(statEls[0]){statEls[0].querySelector('.lbl').textContent=t.bestCropLabel;statEls[0].querySelector('.chg').textContent=t.bestCropChg;}
-    if(statEls[1]){statEls[1].querySelector('.lbl').textContent=t.wheatPriceLabel;statEls[1].querySelector('.chg').textContent=t.wheatPriceChg;}
-    if(statEls[2]){statEls[2].querySelector('.lbl').textContent=t.weatherLabel;statEls[2].querySelector('.chg').textContent=t.weatherChg;}
-    if(statEls[3]){statEls[3].querySelector('.val').textContent=t.askAI;statEls[3].querySelector('.lbl').textContent=t.askAILabel;statEls[3].querySelector('.chg').textContent=t.askAIBadge;}
+    txt('h-greet','greet'); txt('h-title','heroTitle'); txt('h-sub','heroSub');
+    // Re-render dynamic home sections
+    if(PRICE_DATA){renderCropCalendar();renderMarketHighlights();renderDataFreshness();}
     // quick actions sec
     const qaH=document.querySelector('#page-home .sec:last-child .sec-head h3');if(qaH)qaH.textContent=t.quickActions;
     const qabtns=document.querySelectorAll('#page-home .action-grid button');
     const qKeys=['qCropAdvice','qMandiPrices','qWeather','qAskAI','qNewFarmer','qDisease','qSchemes','qMandiLocator'];
     qabtns.forEach((b,i)=>{if(t[qKeys[i]])b.textContent=t[qKeys[i]];});
-    // tips
-    const homeTips=document.querySelectorAll('#page-home .sec:first-of-type .tip');
-    ['todayTip1','todayTip2','todayTip3','todayTip4'].forEach((k,i)=>{if(homeTips[i]&&t[k])homeTips[i].innerHTML=t[k];});
-    const tipBadge=document.querySelector('#page-home .sec:first-of-type .badge');if(tipBadge)tipBadge.textContent=t.tipAlerts;
   
     // ── Prices page ───────────────────────────────────────
     const fchips=document.querySelectorAll('.filter-row .fchip');
@@ -1319,22 +1344,170 @@ window.onload = function() {
     el.innerHTML = html;
   }
 
-  // ── Update home page wheat price card from data ──────────
-  function updateHomeWheatCard() {
-    if (!PRICE_DATA) return;
-    // Find wheat in dataset (key might be "wheat")
-    const wheat = PRICE_DATA['wheat'];
-    if (!wheat) return;
-    const priceEl = document.getElementById('home-wheat-price');
-    const chgEl = document.getElementById('home-wheat-chg');
-    if (priceEl) priceEl.textContent = '₹' + wheat.current_price.toLocaleString();
-    if (chgEl) {
-      const chg = wheat.change_30d_pct || 0;
-      const dir = chg > 0 ? 'up' : chg < 0 ? 'dn' : 'flat';
-      const arrow = dir === 'up' ? '↑' : dir === 'dn' ? '↓' : '→';
-      chgEl.textContent = `${arrow} ${Math.abs(chg).toFixed(1)}% (30d)`;
-      chgEl.className = 'chg ' + dir;
+  // ── Current season helper ────────────────────────────────
+  function getCurrentSeason() {
+    var m = new Date().getMonth() + 1;
+    if (m >= 6 && m <= 10) return 'kharif';
+    if (m >= 11 || m <= 3) return 'rabi';
+    return 'zaid';
+  }
+
+  // ── Crop Calendar (Home page) ────────────────────────────
+  function renderCropCalendar() {
+    var el = document.getElementById('home-crop-calendar');
+    if (!el || !PRICE_DATA || !window.CropEconomics) return;
+    var t = T[lang];
+    var currentSeason = getCurrentSeason();
+    var seasonNames = { kharif: t.cropCalendarKharif, rabi: t.cropCalendarRabi, zaid: t.cropCalendarZaid };
+    var seasonEmoji = { kharif: '🌧', rabi: '❄️', zaid: '☀️' };
+    var nextSeasonMap = { kharif: 'rabi', rabi: 'zaid', zaid: 'kharif' };
+    var nextSeason = nextSeasonMap[currentSeason];
+
+    var allCrops = CropEconomics.CROP_ECONOMICS;
+    var plantable = [];
+    var upcoming = [];
+
+    Object.keys(allCrops).forEach(function(key) {
+      var crop = allCrops[key];
+      var pd = PRICE_DATA[crop.cropKey];
+      var trend = pd ? (pd.change_30d_pct || 0) : 0;
+      var entry = { key: key, crop: crop, pd: pd, trend: trend };
+      if (crop.season === currentSeason) plantable.push(entry);
+      else if (crop.season === nextSeason) upcoming.push(entry);
+    });
+
+    var html = '<div class="sec-head">';
+    html += '<h3>' + seasonEmoji[currentSeason] + ' ' + t.cropCalendarTitle + '</h3>';
+    html += '<span class="badge flat tag">' + t.cropCalendarCurrent + ' ' + seasonNames[currentSeason] + '</span>';
+    html += '</div>';
+
+    if (plantable.length === 0) {
+      html += '<div class="empty-state">' + t.cropCalendarNoData + '</div>';
+    } else {
+      html += '<div class="crop-cal-grid">';
+      plantable.forEach(function(entry) {
+        var cropName = CropEconomics.formatCropName(entry.key);
+        var hasData = !!entry.pd;
+        var priceStr = hasData ? '₹' + entry.pd.current_price.toLocaleString() : null;
+        var dir = entry.trend > 0 ? 'up' : entry.trend < 0 ? 'dn' : 'flat';
+        var arrow = dir === 'up' ? '↑' : dir === 'dn' ? '↓' : '→';
+
+        html += '<div class="crop-cal-card">';
+        html += '<div class="crop-cal-name">' + cropName + '</div>';
+        html += '<div class="crop-cal-season">' + seasonNames[entry.crop.season] + '</div>';
+        if (hasData) {
+          html += '<div class="crop-cal-price">' + priceStr + ' <span class="' + dir + '">' + arrow + ' ' + Math.abs(entry.trend).toFixed(1) + '%</span></div>';
+        } else {
+          html += '<div class="crop-cal-price" style="color:var(--text3)">—</div>';
+        }
+        html += '<div class="crop-cal-tag plantable">' + t.cropCalendarPlantable + '</div>';
+        html += '<button class="crop-cal-ask" onclick="goPage(\'chat\',document.getElementById(\'tab-chat\'));setTimeout(function(){document.getElementById(\'chat-inp\').value=\'Tell me about ' + cropName + ' farming\';},200)">' + t.cropCalendarAskAI + '</button>';
+        html += '</div>';
+      });
+      html += '</div>';
     }
+
+    if (upcoming.length > 0) {
+      html += '<div class="crop-cal-upcoming"><span class="crop-cal-upcoming-label">' + t.cropCalendarNextSeason + '</span> ';
+      html += upcoming.map(function(e) { return CropEconomics.formatCropName(e.key); }).join(', ');
+      html += '</div>';
+    }
+
+    el.innerHTML = html;
+  }
+
+  // ── Market Highlights (Home page) ────────────────────────
+  function renderMarketHighlights() {
+    var el = document.getElementById('home-market-highlights');
+    if (!el || !PRICE_DATA || !window.KisanAnalytics) return;
+    var t = T[lang];
+    var overview = KisanAnalytics.generateOverview(PRICE_DATA);
+    if (!overview) { el.innerHTML = '<div class="empty-state">Unable to generate market highlights.</div>'; return; }
+
+    var g = overview.topGainer || {};
+    var l = overview.topLoser || {};
+    var v = overview.mostVolatile || {};
+    var s = overview.mostStable || {};
+
+    var html = '<div class="sec-head"><h3>💹 ' + t.marketHighlightsTitle + '</h3></div>';
+    html += '<div class="market-hl-grid">';
+    html += '<div class="market-hl-card" onclick="goPage(\'prices\',document.querySelectorAll(\'.tab\')[2])">';
+    html += '<div class="market-hl-label">' + t.marketHighlightsTopGainer + '</div>';
+    html += '<div class="market-hl-name">' + (g.name || '—') + '</div>';
+    html += '<div class="market-hl-chg up">↑ ' + (g.change || 0) + '%</div>';
+    html += '</div>';
+    html += '<div class="market-hl-card" onclick="goPage(\'prices\',document.querySelectorAll(\'.tab\')[2])">';
+    html += '<div class="market-hl-label">' + t.marketHighlightsTopLoser + '</div>';
+    html += '<div class="market-hl-name">' + (l.name || '—') + '</div>';
+    html += '<div class="market-hl-chg dn">↓ ' + Math.abs(l.change || 0) + '%</div>';
+    html += '</div>';
+    html += '<div class="market-hl-card" onclick="goPage(\'prices\',document.querySelectorAll(\'.tab\')[2])">';
+    html += '<div class="market-hl-label">' + t.marketHighlightsMostVolatile + '</div>';
+    html += '<div class="market-hl-name">' + (v.name || '—') + '</div>';
+    html += '<div class="market-hl-chg flat">' + (v.cv || 0) + '% CV</div>';
+    html += '</div>';
+    html += '<div class="market-hl-card" onclick="goPage(\'prices\',document.querySelectorAll(\'.tab\')[2])">';
+    html += '<div class="market-hl-label">' + t.marketHighlightsMostStable + '</div>';
+    html += '<div class="market-hl-name">' + (s.name || '—') + '</div>';
+    html += '<div class="market-hl-chg flat">' + (s.cv || 0) + '% CV</div>';
+    html += '</div>';
+    html += '</div>';
+    el.innerHTML = html;
+  }
+
+  // ── Data Freshness (Home page) ───────────────────────────
+  function renderDataFreshness() {
+    var el = document.getElementById('home-data-freshness');
+    if (!el || !PRICE_DATA) return;
+    var t = T[lang];
+    var totalCrops = Object.keys(PRICE_DATA).length;
+    var maxDate = '0000-00-00';
+    var freshCount = 0;
+    var staleCount = 0;
+    var histCount = 0;
+    var now = Date.now();
+    var YEAR = 365 * 24 * 3600 * 1000;
+
+    Object.keys(PRICE_DATA).forEach(function(cropKey) {
+      var crop = PRICE_DATA[cropKey];
+      var history = crop.history;
+      if (history && history.length > 0) {
+        var lastDate = history[history.length - 1].date;
+        if (lastDate > maxDate) maxDate = lastDate;
+        var lastTime = new Date(lastDate).getTime();
+        var age = now - lastTime;
+        if (age < 2 * YEAR) freshCount++;
+        else if (age < 5 * YEAR) staleCount++;
+        else histCount++;
+      }
+    });
+
+    var freshnessPct = totalCrops > 0 ? Math.round((freshCount / totalCrops) * 100) : 0;
+    var freshnessLabel = freshnessPct > 50 ? t.dataFreshnessCurrent : freshnessPct > 0 ? t.dataFreshnessStale : t.dataFreshnessHistorical;
+
+    var html = '<div class="sec-head"><h3>📊 ' + t.dataFreshnessTitle + '</h3></div>';
+    html += '<div class="freshness-grid">';
+    html += '<div class="freshness-stat">';
+    html += '<div class="freshness-val">' + freshnessPct + '%</div>';
+    html += '<div class="freshness-lbl">' + freshnessLabel + '</div>';
+    html += '</div>';
+    html += '<div class="freshness-stat">';
+    html += '<div class="freshness-val">' + totalCrops + '</div>';
+    html += '<div class="freshness-lbl">' + t.dataFreshnessCropsTracked + '</div>';
+    html += '</div>';
+    html += '<div class="freshness-stat">';
+    html += '<div class="freshness-val">' + freshCount + '/' + staleCount + '/' + histCount + '</div>';
+    html += '<div class="freshness-lbl">' + t.dataFreshnessCurrent + ' / ' + t.dataFreshnessStale + ' / ' + t.dataFreshnessHistorical + '</div>';
+    html += '</div>';
+    html += '</div>';
+    html += '<div class="freshness-bar-wrap"><div class="freshness-bar">';
+    if (histCount > 0) html += '<div class="freshness-seg old" style="flex:' + histCount + '"></div>';
+    if (staleCount > 0) html += '<div class="freshness-seg stale" style="flex:' + staleCount + '"></div>';
+    if (freshCount > 0) html += '<div class="freshness-seg fresh" style="flex:' + freshCount + '"></div>';
+    html += '</div></div>';
+    html += '<div class="freshness-meta"><span class="freshness-icon">ℹ️</span> ' + t.dataFreshnessNote + '</div>';
+
+    el.innerHTML = html;
   }
 
   // ── Initialize price UI on load ───────────────────────────
@@ -1343,7 +1516,9 @@ window.onload = function() {
     renderAnalyticsOverview();
     renderRankings();
     renderDataQuality();
-    updateHomeWheatCard();
+    renderCropCalendar();
+    renderMarketHighlights();
+    renderDataFreshness();
   } else {
     showPriceError();
   }

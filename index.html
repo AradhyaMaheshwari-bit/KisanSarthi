@@ -63,7 +63,7 @@
         </svg>
         <span id="t-weather">Weather</span>
       </button>
-      <button class="tab" onclick="goPage('chat',this)">
+      <button class="tab" id="tab-chat" onclick="goPage('chat',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
           <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
         </svg>
@@ -112,48 +112,15 @@
         <p id="h-sub">Your smart AI partner for better farming &amp; higher income</p>
       </div>
 
-      <div class="stat-grid">
-        <div class="stat slide-in" onclick="goPage('advisor',document.querySelectorAll('.tab')[1])">
-          <div class="icon">🌾</div>
-          <div class="val" style="color:var(--green)">Wheat</div>
-          <div class="lbl">Best crop — April</div>
-          <div class="chg up">↑ 92% AI match</div>
-        </div>
-        <div class="stat slide-in" onclick="goPage('prices',document.querySelectorAll('.tab')[2])">
-          <div class="icon">💰</div>
-          <div class="val" id="home-wheat-price">₹--</div>
-          <div class="lbl" id="home-wheat-label">Wheat / quintal</div>
-          <div class="chg up" id="home-wheat-chg">Loading…</div>
-        </div>
-        <div class="stat slide-in" onclick="goPage('weather',document.querySelectorAll('.tab')[3])">
-          <div class="icon">🌤</div>
-          <div class="val">29°C</div>
-          <div class="lbl">Today's weather</div>
-          <div class="chg flat">Partly cloudy</div>
-        </div>
-        <div class="stat slide-in" onclick="goPage('chat',document.querySelectorAll('.tab')[4])">
-          <div class="icon">🤖</div>
-          <div class="val">Ask AI</div>
-          <div class="lbl">Get instant answers</div>
-          <div class="chg up badge-live">● Live</div>
-        </div>
-      </div>
+      <div id="home-crop-calendar" class="sec"></div>
+
+      <div id="home-market-highlights" class="sec"></div>
+
+      <div id="home-data-freshness" class="sec"></div>
 
       <div class="sec">
         <div class="sec-head">
-          <h3 id="h-tips">Today's AI Tips</h3>
-          <span class="badge up tag">3 alerts</span>
-        </div>
-        <div class="tip g">🌱 Best time to sow <strong>Moong Dal</strong> — soil temp ideal this week. Expect 6–8
-          q/acre.</div>
-        <div class="tip a">⚠️ Aphid alert in your region. Apply neem spray before Wednesday rain.</div>
-        <div class="tip g">💧 Wheat at grain-fill stage — water every 8 days. Do not overwater.</div>
-        <div class="tip r">🌡 Heat wave possible in 10 days — protect nursery seedlings with shade net.</div>
-      </div>
-
-      <div class="sec">
-        <div class="sec-head">
-          <h3>Quick Actions</h3>
+          <h3 id="h-tips">Quick Actions</h3>
         </div>
         <div class="action-grid">
           <button class="btn-next" onclick="goPage('advisor',document.querySelectorAll('.tab')[1])">🌾 Get crop

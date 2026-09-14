@@ -354,11 +354,53 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .anomaly-tag.low{background:var(--blue-light);color:var(--blue)}
 @media(max-width:400px){
   .analytics-grid{grid-template-columns:1fr}
+  .crop-cal-grid{grid-template-columns:1fr}
+  .market-hl-grid{grid-template-columns:1fr}
+  .freshness-grid{grid-template-columns:1fr}
 }
+
+/* ─── Crop Calendar (Phase 8) ───────────────────────── */
+.crop-cal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px}
+.crop-cal-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:4px;transition:all .15s}
+.crop-cal-card:hover{border-color:var(--green-pale);background:var(--green-light)}
+.crop-cal-name{font-size:14px;font-weight:600;color:var(--text)}
+.crop-cal-season{font-size:11px;color:var(--text2)}
+.crop-cal-price{font-size:13px;font-weight:600;color:var(--text);margin-top:2px}
+.crop-cal-tag{font-size:10px;font-weight:600;padding:2px 8px;border-radius:8px;display:inline-block;width:fit-content}
+.crop-cal-tag.plantable{background:var(--green-light);color:#1a4a08;border:1px solid var(--green-pale)}
+.crop-cal-ask{margin-top:4px;padding:5px 10px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--green);font-size:11px;font-weight:600;cursor:pointer;transition:all .15s;font-family:var(--font)}
+.crop-cal-ask:hover{background:var(--green-light);border-color:var(--green)}
+.crop-cal-upcoming{font-size:12px;color:var(--text2);padding-top:6px;border-top:1px solid var(--border)}
+.crop-cal-upcoming-label{font-weight:600;color:var(--text)}
+
+/* ─── Market Highlights (Phase 8) ───────────────────── */
+.market-hl-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.market-hl-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:all .15s}
+.market-hl-card:hover{border-color:var(--green-pale);transform:translateY(-1px);box-shadow:var(--shadow)}
+.market-hl-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.market-hl-name{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.3px;margin-bottom:4px}
+.market-hl-chg{font-size:12px;font-weight:600;padding:2px 8px;border-radius:8px;display:inline-block}
+.market-hl-chg.up{background:var(--green-light);color:#1a4a08}
+.market-hl-chg.dn{background:var(--red-light);color:#6b1010}
+.market-hl-chg.flat{background:var(--card);color:var(--text2);border:1px solid var(--border)}
+
+/* ─── Data Freshness (Phase 8) ──────────────────────── */
+.freshness-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}
+.freshness-stat{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center}
+.freshness-val{font-size:20px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.freshness-lbl{font-size:11px;color:var(--text2);margin-top:2px}
+.freshness-bar-wrap{margin-bottom:10px}
+.freshness-bar{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--border)}
+.freshness-seg{min-width:2px;border-radius:2px}
+.freshness-seg.fresh{background:var(--green)}
+.freshness-seg.stale{background:var(--amber)}
+.freshness-seg.old{background:var(--red)}
+.freshness-meta{font-size:12px;color:var(--text2);padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:flex-start;gap:6px;line-height:1.5}
+.freshness-icon{flex-shrink:0}
 
 /* ─── Print Layout ─────────────────────────────────── */
 @media print{
-  .topbar,.tab-bar,.lang-toggle,.btn-next,#nf-profit-btn-wrap{display:none!important}
+  .topbar,.tab-bar,.lang-toggle,.btn-next,#nf-profit-btn-wrap,#home-crop-calendar,#home-market-highlights,#home-data-freshness{display:none!important}
   .page{display:block!important;padding:0}
   body{background:#fff;color:#000;font-size:12px}
   .hero,.result-hero{background:#0f766e!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
