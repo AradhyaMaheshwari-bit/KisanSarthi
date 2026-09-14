@@ -251,6 +251,72 @@ window.onload = function() {
     return lines.join('\n');
   }
 
+  // ── Phase 9E: Build recommendation context for AI ──────────
+  function buildRecommendationAIContext(result, farmerContext) {
+    if (!result || !result.isValid || !result.feasible) return '';
+    var lines = [];
+    lines.push('KISANSARTHI CROP RECOMMENDATION (Deterministic Engine Result)');
+    lines.push('Farmer Context: ' + (farmerContext.state || 'unknown') + ', ' +
+      (farmerContext.season || 'unknown') + ' season, ' +
+      (farmerContext.landAcres || '?') + ' acres');
+
+    // Feasible crops in engine order
+    lines.push('');
+    lines.push('RECOMMENDATION ORDER (ranked by agronomic fit, economics, data freshness):');
+    result.feasible.forEach(function(crop, idx) {
+      var eco = crop.economics || {};
+      var agro = crop.agronomicFit || {};
+      var risk = crop.marketRisk || {};
+      var rel = crop.dataReliability || {};
+      var exp = crop.explanation || {};
+
+      var netStr = eco.estimatedNetReturn != null ? '₹' + Math.round(eco.estimatedNetReturn) + '/acre' : 'unavailable';
+      var roiStr = eco.roi != null ? eco.roi.toFixed(1) + '%' : 'unavailable';
+      var priceStr = eco.marketPrice != null ? '₹' + Math.round(eco.marketPrice) + '/q' : 'unavailable';
+      var breakStr = eco.breakEvenPrice != null ? '₹' + Math.round(eco.breakEvenPrice) + '/q' : 'unavailable';
+
+      lines.push((idx + 1) + '. ' + crop.displayName + ' (' + crop.cropKey + ')');
+      lines.push('   Agronomic Tier: ' + (agro.tier || 'unknown') +
+        ', Soil: ' + (agro.soilStatus || 'unknown') +
+        ', Season: ' + (agro.seasonStatus || 'unknown') +
+        ', Duration: ' + (agro.harvestDurationDays ? agro.harvestDurationDays.typical + ' days' : 'unknown'));
+      lines.push('   Net Return: ' + netStr + ', ROI: ' + roiStr +
+        ', Market Price: ' + priceStr + ', Break-even: ' + breakStr);
+      lines.push('   Total Cost: ' + (eco.totalCost != null ? '₹' + Math.round(eco.totalCost) : 'unavailable') +
+        ', Revenue: ' + (eco.estimatedRevenue != null ? '₹' + Math.round(eco.estimatedRevenue) : 'unavailable'));
+      if (eco.isNegativeReturn) lines.push('   WARNING: Negative return — estimated loss');
+      lines.push('   Data Freshness: ' + (eco.freshnessTier || 'unknown') +
+        (eco.priceDate ? ' (price date: ' + eco.priceDate + ')' : ''));
+      if (eco.freshnessWarning) lines.push('   Freshness Warning: ' + eco.freshnessWarning);
+      lines.push('   Market Risk: ' + (risk.tier || 'unknown') +
+        ' (CV: ' + (risk.volatilityCV != null ? risk.volatilityCV.toFixed(2) + '%' : 'unknown') + ')');
+      lines.push('   Data Reliability: ' + (rel.agronomicEvidenceConfidence || 'unknown'));
+      if (rel.warning) lines.push('   Reliability Warning: ' + rel.warning);
+
+      if (exp.whyRecommended && exp.whyRecommended.length > 0) {
+        lines.push('   Why: ' + exp.whyRecommended.join('; '));
+      }
+      if (exp.cautions && exp.cautions.length > 0) {
+        lines.push('   Cautions: ' + exp.cautions.join('; '));
+      }
+    });
+
+    // Infeasible crops
+    if (result.infeasible && result.infeasible.length > 0) {
+      lines.push('');
+      lines.push('NOT FEASIBLE:');
+      result.infeasible.forEach(function(crop) {
+        lines.push('- ' + crop.displayName + ': ' + (crop.exclusionReasons || []).join('; '));
+      });
+    }
+
+    lines.push('');
+    lines.push('IMPORTANT: This data is from KisanSarthi deterministic recommendation engine.');
+    lines.push('Explain this data. Do not create new rankings. Do not invent facts not present above.');
+
+    return lines.join('\n');
+  }
+
   // Validate forecast values — log invalid ones for pipeline correction
   function validateForecasts() {
     if (!PRICE_DATA) return;
@@ -655,7 +721,7 @@ window.onload = function() {
     htm('mn-tip1','mnTip1'); htm('mn-tip2','mnTip2'); htm('mn-tip3','mnTip3');
     txt('mn-search-again','mnSearchAgain');
     // Crop Recs page
-    txt('cr-form-title','crFormTitle'); txt('cr-form-badge','crFormBadge');
+    txt('cr-form-title','crFormTitle'); txt('cr-form-badge','crFormBadge'); txt('cr-form-sub','crFormSub');
     txt('cr-state-lbl','crStateLabel'); txt('cr-soil-lbl','crSoilLabel');
     txt('cr-irrigation-lbl','crIrrigationLabel'); txt('cr-season-lbl','crSeasonLabel');
     txt('cr-acres-lbl','crAcresLabel'); txt('cr-submit-txt','crSubmit');
@@ -1607,10 +1673,26 @@ RULES:
 - Keep answers concise (under 200 words) unless complex topic needs more.
 - Format multi-step advice with numbered points or bullet symbols.
 - Always end with one short actionable tip.
-- Respond in the same language the farmer writes in (Hindi or English).`;
+- Respond in the same language the farmer writes in (Hindi or English).
+
+CROP RECOMMENDATION DATA — When a CropRecommendation result is provided in the conversation context, it is the OUTPUT OF A DETERMINISTIC ENGINE, not your own analysis. Follow these rules strictly:
+
+1. The recommendation ranking is authoritative. Do NOT reorder, override, or second-guess it.
+2. Explain WHY the engine ranked crops as it did, using the supplied evidence (agronomic tier, economics, market risk, data reliability).
+3. Use ONLY the supplied economics. If estimatedNetReturn is negative, describe it as an estimated loss — never as "low profit".
+4. If freshnessTier is "stale" or "historical", clearly state the price data is old. Never present old prices as current.
+5. If freshnessTier is "unavailable", say no price data is available. Never invent a price.
+6. If a crop is listed as "NOT FEASIBLE", use the supplied exclusion reason. Never override the infeasibility.
+7. Never invent fertilizer dosages, irrigation quantities, sowing dates, pesticide advice, or guaranteed yields.
+8. Never claim guaranteed profit, guaranteed yield, or certainty.
+9. State that estimates are estimates. Recommend verifying with local mandi prices, Soil Health Card, and KVK guidance.
+10. When the farmer asks about a crop NOT in the recommendation, use only general knowledge and market data — do not fabricate recommendation-specific information.
+11. Never produce a composite percentage score (e.g., "92% match") unless the engine supplies one (it does not).
+12. Distinguish between what the engine determined and what you are explaining.`;
   
   let chatHistory=[];
   let isChatLoading=false;
+  var lastCropRecommendation = null; // { result, farmerContext } — Phase 9E
   
   async function doChat(){
     const inp=document.getElementById('chat-inp');
@@ -1641,6 +1723,31 @@ RULES:
           systemMsg += '\n\n--- KISANSARTHI MARKET DATA ---\n' +
             contextParts.join('\n\n') +
             '\n--- END MARKET DATA ---\n\nUse the above real data to answer the farmer\'s question about these crops.';
+        }
+      }
+
+      // Phase 9E: Inject recommendation context if available
+      if (lastCropRecommendation) {
+        var recCtx = buildRecommendationAIContext(
+          lastCropRecommendation.result,
+          lastCropRecommendation.farmerContext
+        );
+        if (recCtx) {
+          systemMsg += '\n\n--- KISANSARTHI RECOMMENDATION DATA ---\n' +
+            recCtx +
+            '\n--- END RECOMMENDATION DATA ---';
+        }
+      }
+
+      // Phase 9E: Update chat badge to indicate recommendation context
+      var badge = document.querySelector('#page-chat .badge');
+      if (badge) {
+        if (lastCropRecommendation) {
+          badge.textContent = '● Recommendation Active';
+          badge.className = 'badge up tag';
+        } else {
+          badge.textContent = '● AI Ready';
+          badge.className = 'badge up tag badge-live';
         }
       }
 
@@ -3035,6 +3142,12 @@ RULES:
     // Disclaimer
     discEl.style.display='block';
     document.getElementById('cr-disclaimer-txt').textContent=t.crDisclaimer;
+
+    // Phase 9E: Store recommendation for AI context
+    lastCropRecommendation = {
+      result: result,
+      farmerContext: { state: state, season: season, landAcres: acres }
+    };
   }
 
   } // end bootApp()
