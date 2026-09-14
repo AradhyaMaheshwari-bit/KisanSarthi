@@ -50,6 +50,13 @@
         </svg>
         <span id="t-advisor">Advisor</span>
       </button>
+      <button class="tab" onclick="goPage('croprecs',this)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
+          <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+          <path d="M8 12l2 2 4-4"/>
+        </svg>
+        <span id="t-croprecs">Crop Recs</span>
+      </button>
       <button class="tab" onclick="goPage('prices',this)">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round">
           <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
@@ -302,6 +309,99 @@
         <button class="btn-next btn-full" onclick="resetAdvisor()">← Analyse again</button>
       </div>
 
+    </div>
+
+    <!-- ════════════════════════════════════════════════════ -->
+    <!-- CROP RECOMMENDATIONS PAGE                           -->
+    <!-- ════════════════════════════════════════════════════ -->
+    <div class="page" id="page-croprecs">
+
+      <!-- FORM -->
+      <div class="sec" id="cr-form-sec">
+        <div class="sec-head">
+          <h3 id="cr-form-title">🌱 Crop Recommendations</h3>
+          <span class="badge up tag" id="cr-form-badge">Engine-powered</span>
+        </div>
+        <p style="font-size:13px;color:var(--text2);margin-bottom:14px" id="cr-form-sub">
+          Enter your farm details to get evidence-based crop recommendations.
+        </p>
+
+        <label class="wiz-label" for="cr-state" id="cr-state-lbl">🗺 State</label>
+        <select class="mandi-select" id="cr-state">
+          <option value="">-- Select State --</option>
+          <option>Andhra Pradesh</option>
+          <option>Bihar</option>
+          <option>Chhattisgarh</option>
+          <option>Gujarat</option>
+          <option>Haryana</option>
+          <option>Jharkhand</option>
+          <option>Karnataka</option>
+          <option>Madhya Pradesh</option>
+          <option>Maharashtra</option>
+          <option>Odisha</option>
+          <option>Punjab</option>
+          <option>Rajasthan</option>
+          <option>Tamil Nadu</option>
+          <option>Telangana</option>
+          <option>Uttar Pradesh</option>
+          <option>Uttarakhand</option>
+          <option>West Bengal</option>
+        </select>
+
+        <label class="wiz-label" for="cr-soil" id="cr-soil-lbl">🌍 Soil Type</label>
+        <select class="mandi-select" id="cr-soil">
+          <option value="">-- Select Soil --</option>
+          <option value="alluvial">Alluvial (Jalod)</option>
+          <option value="black">Black (Kali Mitti)</option>
+          <option value="red">Red &amp; Laterite</option>
+          <option value="sandy">Sandy (Balu)</option>
+          <option value="clay_loam">Clay Loam</option>
+          <option value="sandy_loam">Sandy Loam</option>
+          <option value="loam">Loam</option>
+        </select>
+
+        <label class="wiz-label" for="cr-irrigation" id="cr-irrigation-lbl">💧 Irrigation Source</label>
+        <select class="mandi-select" id="cr-irrigation">
+          <option value="">-- Select Irrigation --</option>
+          <option value="canal">Canal</option>
+          <option value="tubewell">Tubewell / Borewell</option>
+          <option value="drip">Drip Irrigation</option>
+          <option value="sprinkler">Sprinkler</option>
+          <option value="rainfed">Rainfed</option>
+        </select>
+
+        <label class="wiz-label" for="cr-season" id="cr-season-lbl">📅 Season</label>
+        <select class="mandi-select" id="cr-season">
+          <option value="kharif">Kharif (Jun–Oct)</option>
+          <option value="rabi">Rabi (Oct–Mar)</option>
+          <option value="zaid">Zaid (Mar–Jun)</option>
+        </select>
+
+        <label class="wiz-label" for="cr-acres" id="cr-acres-lbl">📐 Land Area (acres)</label>
+        <input type="number" class="mandi-select" id="cr-acres" min="0.1" max="500" step="0.1" value="2"
+          style="width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);font-size:13px;font-family:var(--font)">
+
+        <button class="btn-next btn-full" id="cr-submit" onclick="runCropRecommendations()" style="margin-top:14px">
+          <span id="cr-submit-txt">🔍 Get Recommendations</span>
+        </button>
+      </div>
+
+      <!-- LOADING -->
+      <div id="cr-loading" class="ai-loading" style="display:none;margin-bottom:12px">
+        <div class="spinner"></div>
+        <span id="cr-loading-text">Analysing crops for your conditions…</span>
+      </div>
+
+      <!-- RESULTS -->
+      <div id="cr-results" style="display:none"></div>
+
+      <!-- ERROR -->
+      <div id="cr-error" style="display:none"></div>
+
+      <!-- DISCLAIMER -->
+      <div class="tip g" id="cr-disclaimer" style="display:none;margin-top:8px">
+        <span id="cr-disclaimer-txt"></span>
+      </div>
     </div>
 
     <!-- ════════════════════════════════════════════════════ -->

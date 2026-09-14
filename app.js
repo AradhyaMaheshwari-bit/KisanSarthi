@@ -405,6 +405,25 @@ window.onload = function() {
       mnTip2:'⚠️ <strong>Best time to sell:</strong> Arrive early (6–9 AM) for better price discovery and fresh assessment.',
       mnTip3:'💰 <strong>Check MSP first:</strong> Know today\'s MSP before going to ensure you don\'t sell below minimum price.',
       mnSearchAgain:'← Search Again',
+      // Crop Recs page
+      cropRecs:'Crop Recs',
+      crFormTitle:'🌱 Crop Recommendations',crFormBadge:'Engine-powered',
+      crFormSub:'Enter your farm details to get evidence-based crop recommendations.',
+      crStateLabel:'🗺 State',crSoilLabel:'🌍 Soil Type',crIrrigationLabel:'💧 Irrigation Source',
+      crSeasonLabel:'📅 Season',crAcresLabel:'📐 Land Area (acres)',
+      crSubmit:'🔍 Get Recommendations',crLoading:'Analysing crops for your conditions…',
+      crResultTitle:'Crop Recommendations',crFeasibleBadge:'Recommended',crInfeasibleBadge:'Not Suitable',
+      crNetReturn:'Net Return',crRoi:'ROI',crPerAcre:'/ acre',crTotalFor:'Total for',crAcresUnit:'acres',
+      crBreakEven:'Break-even',crMarketPrice:'Market Price',crYield:'Expected Yield',
+      crCost:'Cultivation Cost',crRevenue:'Est. Revenue',crFreshness:'Data Freshness',
+      crVolatility:'Price Volatility',crAgronomic:'Agronomic Fit',crEconomics:'Economics',
+      crMarketRisk:'Market Risk',crDataReliability:'Data Reliability',
+      crWhyTitle:'Why this crop?',crCautionTitle:'⚠ Cautions',crNotSuitable:'Not suitable because:',
+      crDisclaimer:'ℹ Recommendations are based on agronomic compatibility and market data. Always consult your local Krishi Vigyan Kendra (KVK) and use a Soil Health Card for precise advice.',
+      crNegativeWarning:'⚠ Negative margin — expected loss of',
+      crStaleData:'⚠ Stale market data (2–5 years old)',crHistoricalData:'⚠ Historical market data (>5 years old)',
+      crErrorMissing:'Please fill all fields (State, Soil, Irrigation, Season, Land Area).',
+      crErrorAcres:'Please enter a valid land area (0.1–500 acres).',
     },
     hi:{
       home:'होम',advisor:'सलाह',prices:'भाव',weather:'मौसम',chat:'AI चैट',newfarmer:'नया किसान',disease:'पौधा जांचें',schemes:'योजना',mandi:'मंडी',
@@ -507,6 +526,25 @@ window.onload = function() {
       mnTip2:'⚠️ <strong>बेचने का सबसे अच्छा समय:</strong> बेहतर भाव के लिए सुबह जल्दी (6-9 बजे) पहुंचें।',
       mnTip3:'💰 <strong>पहले MSP जांचें:</strong> न्यूनतम समर्थन मूल्य से नीचे न बेचें।',
       mnSearchAgain:'← फिर खोजें',
+      // Crop Recs page
+      cropRecs:'फसल सुझाव',
+      crFormTitle:'🌱 फसल सिफारिशें',crFormBadge:'इंजन-संचालित',
+      crFormSub:'साक्ष्य-आधारित फसल सिफारिशें प्राप्त करने के लिए अपनी खेत की जानकारी दर्ज करें।',
+      crStateLabel:'🗺 राज्य',crSoilLabel:'🌍 मिट्टी का प्रकार',crIrrigationLabel:'💧 सिंचाई स्रोत',
+      crSeasonLabel:'📅 मौसम',crAcresLabel:'📐 भूमि क्षेत्र (एकड़)',
+      crSubmit:'🔍 सिफारिशें प्राप्त करें',crLoading:'आपकी शर्तों के लिए फसलों का विश्लेषण हो रहा है…',
+      crResultTitle:'फसल सिफारिशें',crFeasibleBadge:'अनुशंसित',crInfeasibleBadge:'उपयुक्त नहीं',
+      crNetReturn:'शुद्ध लाभ',crRoi:'ROI',crPerAcre:'/ एकड़',crTotalFor:'कुल',crAcresUnit:'एकड़',
+      crBreakEven:'ब्रेक-इवेन',crMarketPrice:'बाज़ार भाव',crYield:'अपेक्षित उपज',
+      crCost:'खेती लागत',crRevenue:'अनुमानित आय',crFreshness:'डेटा ताज़गी',
+      crVolatility:'मूल्य अस्थिरता',crAgronomic:'कृषि अनुकूलता',crEconomics:'अर्थव्यवस्था',
+      crMarketRisk:'बाज़ार जोखिम',crDataReliability:'डेटा विश्वसनीयता',
+      crWhyTitle:'यह फसल क्यों?',crCautionTitle:'⚠ सावधानी',crNotSuitable:'उपयुक्त नहीं क्योंकि:',
+      crDisclaimer:'ℹ सिफारिशें कृषि अनुकूलता और बाज़ार डेटा पर आधारित हैं। सटीक सलाह के लिए अपने स्थानीय कृषि विज्ञान केंद्र (KVK) से परामर्श करें और मृदा स्वास्थ्य कार्ड का उपयोग करें।',
+      crNegativeWarning:'⚠ नकारात्मक मार्जिन — अपेक्षित हानि',
+      crStaleData:'⚠ पुराना बाज़ार डेटा (2-5 वर्ष पुराना)',crHistoricalData:'⚠ ऐतिहासिक बाज़ार डेटा (>5 वर्ष पुराना)',
+      crErrorMissing:'कृपया सभी फील्ड भरें (राज्य, मिट्टी, सिंचाई, मौसम, भूमि क्षेत्र)।',
+      crErrorAcres:'कृपया मान्य भूमि क्षेत्र दर्ज करें (0.1–500 एकड़)।',
     }
   };
   let lang='en';
@@ -524,7 +562,7 @@ window.onload = function() {
     txt('app-title','appTitle'); txt('app-sub','appSub');
   
     // ── Tab labels ────────────────────────────────────────
-    ['home','advisor','prices','weather','chat','newfarmer','disease','schemes','mandi'].forEach(k=>{
+    ['home','advisor','croprecs','prices','weather','chat','newfarmer','disease','schemes','mandi'].forEach(k=>{
       const el=document.getElementById('t-'+k); if(el&&t[k]) el.textContent=t[k];
     });
   
@@ -616,6 +654,12 @@ window.onload = function() {
     txt('mn-res-title','mnResTitleTxt'); txt('mn-tips-title','mnTipsTitle');
     htm('mn-tip1','mnTip1'); htm('mn-tip2','mnTip2'); htm('mn-tip3','mnTip3');
     txt('mn-search-again','mnSearchAgain');
+    // Crop Recs page
+    txt('cr-form-title','crFormTitle'); txt('cr-form-badge','crFormBadge');
+    txt('cr-state-lbl','crStateLabel'); txt('cr-soil-lbl','crSoilLabel');
+    txt('cr-irrigation-lbl','crIrrigationLabel'); txt('cr-season-lbl','crSeasonLabel');
+    txt('cr-acres-lbl','crAcresLabel'); txt('cr-submit-txt','crSubmit');
+    txt('cr-loading-text','crLoading');
   }
   
   /* ═══════════════════════════════════════════════════════
@@ -631,6 +675,11 @@ window.onload = function() {
       // Auto-select first crop on initial visit
       const firstKey = Object.keys(PRICE_DATA)[0];
       if (firstKey) setTimeout(() => selectCrop(firstKey), 100);
+    }
+    if(id==='croprecs'){
+      // Auto-detect season
+      var seasonEl=document.getElementById('cr-season');
+      if(seasonEl) seasonEl.value=getCurrentSeason();
     }
   }
   
@@ -2785,6 +2834,207 @@ RULES:
     document.getElementById('mn-area').innerHTML='<option value="">-- Select Area --</option>';
     document.getElementById('mn-area').disabled=true;
     document.getElementById('mn-find-btn').disabled=true;
+  }
+
+  // ── Crop Recommendations (Phase 9D) ──────────────────
+  function fmtINR(n){
+    if(n===null||n===undefined) return '—';
+    var abs=Math.abs(n);
+    if(abs>=10000000) return (n<0?'-':'')+'₹'+(abs/10000000).toFixed(2)+' Cr';
+    if(abs>=100000) return (n<0?'-':'')+'₹'+(abs/100000).toFixed(2)+' L';
+    return (n<0?'-':'')+'₹'+abs.toLocaleString('en-IN');
+  }
+  function fmtNum(n,dec){return n!==null&&n!==undefined?Number(n).toFixed(dec||0):'—';}
+
+  function runCropRecommendations(){
+    var t=T[lang];
+    var state=document.getElementById('cr-state').value.trim();
+    var soil=document.getElementById('cr-soil').value;
+    var irrigation=document.getElementById('cr-irrigation').value;
+    var season=document.getElementById('cr-season').value;
+    var acresVal=document.getElementById('cr-acres').value;
+    var errEl=document.getElementById('cr-error');
+    var resEl=document.getElementById('cr-results');
+    var loadEl=document.getElementById('cr-loading');
+    var formEl=document.getElementById('cr-form-sec');
+    var discEl=document.getElementById('cr-disclaimer');
+
+    // Validate
+    if(!state||!soil||!irrigation||!season||!acresVal){
+      errEl.style.display='block';
+      errEl.innerHTML='<div class="tip r">'+t.crErrorMissing+'</div>';
+      return;
+    }
+    var acres=parseFloat(acresVal);
+    if(isNaN(acres)||acres<0.1||acres>500){
+      errEl.style.display='block';
+      errEl.innerHTML='<div class="tip r">'+t.crErrorAcres+'</div>';
+      return;
+    }
+
+    // Hide previous results, show loading
+    errEl.style.display='none';
+    resEl.style.display='none';
+    resEl.innerHTML='';
+    discEl.style.display='none';
+    formEl.style.display='none';
+    loadEl.style.display='flex';
+
+    setTimeout(function(){
+      try{
+        var result=window.CropRecommendation.getRecommendations({
+          landAcres:acres,season:season,soilType:soil,irrigationType:irrigation,state:state
+        });
+        loadEl.style.display='none';
+        formEl.style.display='block';
+
+        if(!result.isValid){
+          errEl.style.display='block';
+          errEl.innerHTML='<div class="tip r">'+(result.errors||['Error']).join(', ')+'</div>';
+          return;
+        }
+        renderCropRecResults(result,acres,state,season);
+      }catch(e){
+        loadEl.style.display='none';
+        formEl.style.display='block';
+        errEl.style.display='block';
+        errEl.innerHTML='<div class="tip r">'+e.message+'</div>';
+      }
+    },400);
+  }
+
+  function renderCropRecResults(result,acres,state,season){
+    var t=T[lang];
+    var el=document.getElementById('cr-results');
+    var discEl=document.getElementById('cr-disclaimer');
+    var isHi=lang==='hi';
+    var seasonNames={kharif:isHi?'खरीफ':'Kharif',rabi:isHi?'रबी':'Rabi',zaid:isHi?'ज़ायद':'Zaid'};
+    var html='';
+
+    // Hero
+    html+='<div class="result-hero slide-in">';
+    html+='<div class="res-label">'+t.crResultTitle+'</div>';
+    html+='<div class="big">'+result.feasible.length+' '+(isHi?'फसलें अनुशंसित':'crops recommended')+'</div>';
+    html+='<div class="sub">'+seasonNames[season]+' • '+acres+' '+(isHi?'एकड़':'acres')+' • '+state+'</div>';
+    html+='</div>';
+
+    // Feasible crops
+    result.feasible.forEach(function(crop,idx){
+      var eco=crop.economics;
+      var agro=crop.agronomicFit;
+      var risk=crop.marketRisk;
+      var rel=crop.dataReliability;
+      var exp=crop.explanation;
+      var netColor=eco.isNegativeReturn?'var(--red)':'var(--green)';
+
+      html+='<div class="sec slide-in">';
+      // Header
+      html+='<div class="sec-head">';
+      html+='<h3>'+(idx+1)+'. '+crop.displayName+'</h3>';
+      html+='<span class="badge up tag">'+crop.cropKey+'</span>';
+      html+='</div>';
+
+      // Economic grid
+      html+='<div class="cr-eco-grid">';
+      html+='<div class="cr-eco-card"><div class="cr-eco-label">'+t.crNetReturn+'</div>';
+      html+='<div class="cr-eco-value" style="color:'+netColor+'">'+fmtINR(eco.estimatedNetReturn)+'</div>';
+      html+='<div class="cr-eco-sub">'+t.crPerAcre+'</div></div>';
+      html+='<div class="cr-eco-card"><div class="cr-eco-label">'+t.crRoi+'</div>';
+      html+='<div class="cr-eco-value">'+fmtNum(eco.roi,1)+'%</div></div>';
+      html+='<div class="cr-eco-card"><div class="cr-eco-label">'+t.crMarketPrice+'</div>';
+      html+='<div class="cr-eco-value">₹'+fmtNum(eco.marketPrice)+'/q</div></div>';
+      html+='<div class="cr-eco-card"><div class="cr-eco-label">'+t.crYield+'</div>';
+      html+='<div class="cr-eco-value">'+fmtNum(eco.totalYield,1)+' q</div></div>';
+      html+='</div>';
+
+      // 5 Pillars
+      html+='<div class="cr-pillars">';
+
+      // Pillar 1: Agronomic Fit
+      html+='<div class="cr-pillar">';
+      html+='<div class="cr-pillar-head"><span class="cr-pillar-icon">🌾</span><span>'+t.crAgronomic+'</span>';
+      html+='<span class="badge">'+agro.tier+'</span></div>';
+      html+='<div class="cr-pillar-body">';
+      html+=(isHi?'मिट्टी':'Soil')+': '+agro.soilStatus+' • '+(isHi?'मौसम':'Season')+': '+agro.seasonStatus;
+      html+=' • '+(isHi?'अवधि':'Duration')+': '+agro.harvestDurationDays.typical+' '+(isHi?'दिन':'days');
+      html+='<br>pH: '+agro.optimalPhRange.min+'–'+agro.optimalPhRange.max;
+      html+=' • '+(isHi?'पानी':'Water')+': '+agro.waterRequirementMm.min+'–'+agro.waterRequirementMm.max+'mm';
+      if(agro.isMajorGrowingState) html+=' <span class="badge up">'+(isHi?'प्रमुख राज्य':'Major State')+'</span>';
+      html+='<div class="cr-pillar-note">'+agro.regionalDisclaimer+'</div>';
+      html+='</div></div>';
+
+      // Pillar 2: Economics
+      html+='<div class="cr-pillar">';
+      html+='<div class="cr-pillar-head"><span class="cr-pillar-icon">💰</span><span>'+t.crEconomics+'</span>';
+      if(eco.isNegativeReturn) html+=' <span class="badge" style="background:var(--red-light);color:var(--red)">'+t.crNegativeWarning+'</span>';
+      html+='</div>';
+      html+='<div class="cr-pillar-body">';
+      html+=(isHi?'लागत':'Cost')+': '+fmtINR(eco.totalCost)+' • '+(isHi?'आय':'Revenue')+': '+fmtINR(eco.estimatedRevenue);
+      html+=' • '+(isHi?'शुद्ध':'Net')+': '+fmtINR(eco.estimatedNetReturn);
+      html+='<br>'+(isHi?'ब्रेक-इवेन':'Break-even')+': ₹'+fmtNum(eco.breakEvenPrice)+'/q';
+      if(eco.freshnessTier==='stale') html+='<div class="cr-stale-warn">'+t.crStaleData+'</div>';
+      else if(eco.freshnessTier==='historical') html+='<div class="cr-stale-warn">'+t.crHistoricalData+'</div>';
+      html+='</div></div>';
+
+      // Pillar 3: Market Risk
+      html+='<div class="cr-pillar">';
+      html+='<div class="cr-pillar-head"><span class="cr-pillar-icon">📊</span><span>'+t.crMarketRisk+'</span>';
+      html+='<span class="badge">'+risk.tier+'</span></div>';
+      html+='<div class="cr-pillar-body">'+risk.methodology+' • CV: '+fmtNum(risk.volatilityCV,2)+'</div>';
+      html+='</div>';
+
+      // Pillar 4: Data Reliability
+      html+='<div class="cr-pillar">';
+      html+='<div class="cr-pillar-head"><span class="cr-pillar-icon">🔬</span><span>'+t.crDataReliability+'</span>';
+      html+='<span class="badge">'+rel.agronomicEvidenceConfidence+'</span></div>';
+      html+='<div class="cr-pillar-body">';
+      html+=(isHi?'स्रोत':'Source')+': '+rel.agronomicSource.institution+' — '+rel.agronomicSource.document;
+      if(rel.warning) html+='<div class="cr-stale-warn">'+rel.warning+'</div>';
+      html+='</div></div>';
+
+      // Pillar 5: Explanation
+      html+='<div class="cr-pillar">';
+      html+='<div class="cr-pillar-head"><span class="cr-pillar-icon">💡</span><span>'+t.crWhyTitle+'</span></div>';
+      html+='<div class="cr-pillar-body">';
+      exp.whyRecommended.forEach(function(w){html+='<div>✅ '+w+'</div>';});
+      if(exp.cautions.length>0){
+        html+='<div style="margin-top:6px;font-weight:600;color:var(--red)">'+t.crCautionTitle+'</div>';
+        exp.cautions.forEach(function(c){html+='<div style="color:var(--red)">⚠ '+c+'</div>';});
+      }
+      html+='</div></div>';
+
+      html+='</div><!-- /cr-pillars -->';
+
+      // Land total
+      html+='<div class="cr-land-total">';
+      html+=t.crTotalFor+' '+acres+' '+t.crAcresUnit+': ';
+      html+=(isHi?'आय':'Revenue')+' '+fmtINR(eco.estimatedRevenue)+' • ';
+      html+=(isHi?'शुद्ध लाभ':'Net Return')+' '+fmtINR(eco.estimatedNetReturn);
+      html+='</div>';
+
+      html+='</div><!-- /sec -->';
+    });
+
+    // Infeasible crops
+    if(result.infeasible.length>0){
+      html+='<div class="sec slide-in">';
+      html+='<div class="sec-head"><h3>'+t.crInfeasibleBadge+'</h3>';
+      html+='<span class="badge">'+result.infeasible.length+'</span></div>';
+      result.infeasible.forEach(function(crop){
+        html+='<div class="cr-infeasible-row">';
+        html+='<span class="cr-infeasible-name">'+crop.displayName+'</span>';
+        html+='<span class="cr-infeasible-reason">'+crop.exclusionReasons.join(', ')+'</span>';
+        html+='</div>';
+      });
+      html+='</div>';
+    }
+
+    el.innerHTML=html;
+    el.style.display='block';
+
+    // Disclaimer
+    discEl.style.display='block';
+    document.getElementById('cr-disclaimer-txt').textContent=t.crDisclaimer;
   }
 
   } // end bootApp()

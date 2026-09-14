@@ -398,6 +398,31 @@ input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;bac
 .freshness-meta{font-size:12px;color:var(--text2);padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:flex-start;gap:6px;line-height:1.5}
 .freshness-icon{flex-shrink:0}
 
+/* ─── Crop Recommendations (Phase 9D) ─────────────── */
+.cr-eco-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:12px}
+.cr-eco-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center}
+.cr-eco-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.3px;margin-bottom:4px}
+.cr-eco-value{font-size:18px;font-weight:700;color:var(--text);letter-spacing:-.3px}
+.cr-eco-sub{font-size:11px;color:var(--text2);margin-top:2px}
+
+.cr-pillars{margin-top:12px}
+.cr-pillar{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px}
+.cr-pillar:last-child{margin-bottom:0}
+.cr-pillar-head{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
+.cr-pillar-icon{font-size:16px;flex-shrink:0}
+.cr-pillar-body{font-size:12px;color:var(--text2);line-height:1.6}
+.cr-pillar-note{font-size:11px;color:var(--text3);margin-top:6px;font-style:italic}
+
+.cr-land-total{background:var(--green-light);border:1px solid var(--green-pale);border-radius:10px;padding:12px;margin-top:10px;font-size:13px;font-weight:600;color:#173404;text-align:center}
+
+.cr-infeasible-row{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--border);font-size:13px}
+.cr-infeasible-row:last-child{border-bottom:none}
+.cr-infeasible-name{font-weight:600;color:var(--text)}
+.cr-infeasible-reason{font-size:12px;color:var(--text2)}
+
+.cr-negative{color:var(--red)!important}
+.cr-stale-warn{font-size:11px;color:var(--amber);font-weight:600;margin-top:4px}
+
 /* ─── Print Layout ─────────────────────────────────── */
 @media print{
   .topbar,.tab-bar,.lang-toggle,.btn-next,#nf-profit-btn-wrap,#home-crop-calendar,#home-market-highlights,#home-data-freshness{display:none!important}
