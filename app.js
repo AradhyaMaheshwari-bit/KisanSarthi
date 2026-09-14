@@ -35,19 +35,202 @@ window.onload = function() {
     return val;
   }
 
-  // Get crop market context for AI integration (Phase 4 prep)
+  // Get structured market intelligence context for AI integration (Phase 6)
+  // Uses KisanAnalytics (Phase 4) and forecast metadata (Phase 5)
   function getCropMarketContext(cropKey) {
     if (!PRICE_DATA || !PRICE_DATA[cropKey]) return null;
     const c = PRICE_DATA[cropKey];
-    return {
+    const history = c.history || [];
+
+    // Base data from price_data.json
+    var ctx = {
       name: formatCropName(cropKey),
-      current_price: c.current_price,
-      unit: c.unit,
-      avg_7d: c.avg_7d,
-      change_30d_pct: c.change_30d_pct,
-      forecast_30d: getValidForecast(c),
-      last_updated: c.last_updated
+      currentPrice: c.current_price,
+      unit: c.unit || 'per quintal',
+      change30dPct: c.change_30d_pct,
+      avg7d: c.avg_7d,
+      lastUpdated: c.last_updated,
+      historyLength: history.length,
+      dataRange: history.length > 0
+        ? history[0].date + ' to ' + history[history.length - 1].date
+        : 'none'
     };
+
+    // Analytics from KisanAnalytics (Phase 4)
+    if (window.KisanAnalytics) {
+      var analysis = window.KisanAnalytics.analyzeCrop(c);
+      if (analysis) {
+        var s = analysis.stats;
+        var t = analysis.trend;
+        var v = analysis.volatility;
+        var a = analysis.anomalies;
+        ctx.analytics = {
+          historicalAvg: s ? s.average : null,
+          median: s ? s.median : null,
+          priceMin: s ? s.min : null,
+          priceMax: s ? s.max : null,
+          observationCount: s ? s.count : null,
+          dateSpanDays: s ? s.dateSpanDays : null,
+          trend: t ? t.direction : 'insufficient',
+          trendConfidence: t ? t.confidence : 'insufficient',
+          recentChangePct: t ? t.recentChangePct : null,
+          volatilityLevel: v ? v.level : 'unknown',
+          volatilityCV: v ? v.cv : null,
+          anomalyCount: a ? a.count : 0,
+          deviationPct: analysis.deviationPct,
+          deviationDir: analysis.deviationDir
+        };
+      }
+    }
+
+    // Forecast from Phase 5
+    var forecast = getValidForecast(c);
+    var meta = c.forecast_meta || null;
+    ctx.forecast = {
+      value: forecast,
+      available: forecast != null,
+      modelType: meta ? meta.model_type : null,
+      modelName: meta ? meta.model_name : null,
+      skillScore: meta ? meta.skill_score : null,
+      directionAccuracy: meta ? meta.direction_accuracy : null,
+      validationMAE: meta ? meta.validation_mae : null,
+      validationRMSE: meta ? meta.validation_rmse : null,
+      confidence: meta ? meta.confidence : null,
+      trainingObs: meta ? meta.training_observations : null,
+      testObs: meta ? meta.test_observations : null,
+      interpretation: meta ? meta.interpretation : null
+    };
+
+    // Data quality flags
+    ctx.dataQuality = {
+      sufficient: history.length >= 10,
+      minimal: history.length >= 5 && history.length < 10,
+      insufficient: history.length < 5,
+      hasForecast: forecast != null,
+      forecastReliable: meta && meta.model_type === 'ml' && meta.skill_score > 0
+    };
+
+    return ctx;
+  }
+
+  // Detect which crops are mentioned in a user message
+  function detectCropMentions(message) {
+    if (!PRICE_DATA) return [];
+    var lower = message.toLowerCase();
+    var found = [];
+    var keys = Object.keys(PRICE_DATA);
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      var name = formatCropName(key).toLowerCase();
+      var keyNorm = key.replace(/_/g, ' ').toLowerCase();
+      var matched = false;
+
+      // Multi-word names are safe for substring match
+      if (name.length > 6 && (lower.indexOf(name) !== -1 || lower.indexOf(keyNorm) !== -1)) {
+        matched = true;
+      }
+
+      // Short aliases need word-boundary matching to avoid false positives
+      // (e.g. "rice" inside "price")
+      var shortAliases = {
+        'paddy(dhan)(common)': ['paddy', 'dhan'],
+        'arhar_(tur/red_gram)(whole)': ['arhar', 'toor'],
+        'bengal_gram(gram)(whole)': ['chana', 'chickpea'],
+        'black_gram_(urd_beans)(whole)': ['urd', 'urad', 'black gram'],
+        'green_gram_dal_(moong_dal)': ['moong'],
+        'masur_dal': ['masur', 'lentil', 'masoor'],
+        'ginger(dry)': ['ginger', 'adrak'],
+        'bhindi(ladies_finger)': ['bhindi', 'okra'],
+        'chili_red': ['chilli', 'mirch'],
+        'rice': ['rice', 'chawal'],
+        'wheat': ['wheat', 'gehu'],
+        'onion': ['onion', 'pyaz'],
+        'potato': ['potato', 'aloo'],
+        'turmeric': ['turmeric', 'haldi'],
+        'red_gram': ['red gram'],
+        'mango': ['mango', 'aam'],
+        'maize': ['maize', 'corn', 'makka'],
+        'banana': ['banana', 'kela'],
+        'mustard': ['mustard', 'sarson'],
+        'garlic': ['garlic', 'lehsun'],
+        'cabbage': ['cabbage', 'patta gobi'],
+        'cauliflower': ['cauliflower', 'gobhi'],
+        'pumpkin': ['pumpkin', 'kaddu'],
+        'brinjal': ['brinjal', 'baingan'],
+        'apple': ['apple', 'seb'],
+        'grapes': ['grapes', 'angoor'],
+        'orange': ['orange', 'santara'],
+        'litchi': ['litchi', 'lichi']
+      };
+      var aliases = shortAliases[key] || [];
+      for (var j = 0; j < aliases.length; j++) {
+        // Use word boundary regex for short aliases
+        var pattern = new RegExp('(?:^|[\\s,;.!?])(' + aliases[j] + ')(?:$|[\\s,;.!?])', 'i');
+        if (pattern.test(message)) { matched = true; break; }
+      }
+
+      if (matched && found.indexOf(key) === -1) {
+        found.push(key);
+      }
+    }
+    return found;
+  }
+
+  // Format a crop context into a compact string for the AI system prompt
+  function formatContextForAI(cropCtx) {
+    if (!cropCtx) return '';
+    var lines = [];
+    lines.push('CROP: ' + cropCtx.name);
+    lines.push('Current Price: Rs.' + cropCtx.currentPrice + '/' + cropCtx.unit);
+    lines.push('30-day Change: ' + (cropCtx.change30dPct > 0 ? '+' : '') + cropCtx.change30dPct + '%');
+    lines.push('7-day Average: Rs.' + cropCtx.avg7d);
+    lines.push('Data Points: ' + cropCtx.historyLength + ' (' + cropCtx.dataRange + ')');
+
+    if (cropCtx.analytics) {
+      var a = cropCtx.analytics;
+      lines.push('');
+      lines.push('ANALYTICS (computed by KisanSarthi engine):');
+      if (a.historicalAvg != null) lines.push('  Historical Average: Rs.' + a.historicalAvg);
+      if (a.median != null) lines.push('  Median: Rs.' + a.median);
+      if (a.priceMin != null) lines.push('  Range: Rs.' + a.priceMin + ' - Rs.' + a.priceMax);
+      lines.push('  Trend: ' + a.trend + ' (confidence: ' + a.trendConfidence + ')');
+      if (a.recentChangePct != null) lines.push('  Recent vs Historical: ' + a.recentChangePct + '%');
+      lines.push('  Volatility: ' + a.volatilityLevel + ' (CV: ' + a.volatilityCV + '%)');
+      if (a.anomalyCount > 0) lines.push('  Anomalies: ' + a.anomalyCount + ' detected');
+      if (a.deviationPct != null) lines.push('  Current vs Historical Avg: ' + a.deviationPct + '% ' + a.deviationDir);
+    }
+
+    if (cropCtx.forecast) {
+      var f = cropCtx.forecast;
+      lines.push('');
+      if (f.available) {
+        lines.push('FORECAST (ML model prediction):');
+        lines.push('  30-day Forecast: Rs.' + f.value);
+        lines.push('  Model: ' + f.modelName + ' (' + f.modelType + ')');
+        if (f.skillScore != null) lines.push('  Skill Score: ' + (f.skillScore * 100).toFixed(1) + '% (vs naive baseline)');
+        if (f.directionAccuracy != null) lines.push('  Direction Accuracy: ' + f.directionAccuracy + '%');
+        if (f.validationMAE != null) lines.push('  Validation MAE: Rs.' + f.validationMAE);
+        lines.push('  Confidence: ' + f.confidence);
+        lines.push('  Training Data: ' + f.trainingObs + ' observations');
+      } else {
+        lines.push('FORECAST: Not available (insufficient historical data)');
+      }
+    }
+
+    if (cropCtx.dataQuality) {
+      var dq = cropCtx.dataQuality;
+      lines.push('');
+      lines.push('DATA QUALITY:');
+      if (dq.insufficient) {
+        lines.push('  WARNING: Insufficient data for reliable analysis');
+      } else if (dq.minimal) {
+        lines.push('  NOTE: Limited data — interpret with caution');
+      } else {
+        lines.push('  Status: Adequate (' + cropCtx.historyLength + ' observations)');
+      }
+    }
+
+    return lines.join('\n');
   }
 
   // Validate forecast values — log invalid ones for pipeline correction
@@ -1150,17 +1333,36 @@ window.onload = function() {
   /* ═══════════════════════════════════════════════════════
      AI CHAT — powered by Claude API
   ══════════════════════════════════════════════════════ */
-  const CHAT_SYSTEM=`You are KisanAI, a friendly and expert Indian agricultural assistant. Help farmers with crop selection, pest control, fertilizer advice, government schemes, market prices, weather impact, and farming best practices.
-  
-  Rules:
-  - Be practical, specific, and actionable. Give actual quantities, timings, prices.
-  - Use Indian crop names with English in brackets.
-  - Reference realistic 2026 Indian market prices and government schemes.
-  - Use emojis sparingly to improve readability.
-  - Keep answers concise (under 200 words) unless complex topic needs more.
-  - Format multi-step advice with numbered points or bullet symbols.
-  - Always end with one short actionable tip.
-  - Respond in the same language the farmer writes in (Hindi or English).`;
+  const CHAT_SYSTEM=`You are KisanAI, a friendly and expert Indian agricultural assistant embedded in the KisanSarthi platform. You help farmers with crop selection, pest control, fertilizer advice, government schemes, market prices, weather impact, and farming best practices.
+
+DATA SOURCES — You have access to two types of information:
+
+1. KISANSARTHI DATA (provided below when relevant):
+   - Real crop prices from APMC market datasets
+   - Statistical analytics computed by KisanSarthi's analytics engine
+   - ML forecast predictions from KisanSarthi's forecasting system
+   When this data is provided, use it as your PRIMARY source for price and trend questions about those specific crops. Never fabricate different numbers.
+
+2. GENERAL AGRICULTURAL KNOWLEDGE (from your training):
+   - Farming techniques, pest control, fertilizer schedules
+   - Government schemes, seasonal advice, soil management
+   - General market dynamics and economic factors
+   Use this for questions not covered by KisanSarthi data.
+
+RULES:
+- When KisanSarthi data is provided for a crop, base your price/trend/forecast answer on that data. Say "According to KisanSarthi data..." or "Based on our market data..."
+- NEVER fabricate crop prices, forecast values, or trend directions. If KisanSarthi data is not provided for a crop, say "I don't have specific market data for that crop in our system."
+- Distinguish clearly between: (a) historical data facts, (b) analytical results (trends, volatility), (c) model forecasts (predictions with uncertainty), and (d) general agricultural knowledge.
+- Forecasts are PREDICTIONS, not guarantees. Use language like "the model forecasts approximately..." not "the price will..."
+- If a crop has insufficient data, say so honestly. Do not present a weak forecast as reliable.
+- Do NOT present skill scores or technical ML metrics to farmers unless they specifically ask for technical details.
+- Be practical, specific, and actionable. Give actual quantities, timings, prices.
+- Use Indian crop names with English in brackets.
+- Use emojis sparingly to improve readability.
+- Keep answers concise (under 200 words) unless complex topic needs more.
+- Format multi-step advice with numbered points or bullet symbols.
+- Always end with one short actionable tip.
+- Respond in the same language the farmer writes in (Hindi or English).`;
   
   let chatHistory=[];
   let isChatLoading=false;
@@ -1169,18 +1371,34 @@ window.onload = function() {
     const inp=document.getElementById('chat-inp');
     const q=inp.value.trim();
     if(!q||isChatLoading)return;
-  
+
     promptApiKey(async(key)=>{
       isChatLoading=true;
       const sendBtn=document.getElementById('send-btn');
       sendBtn.disabled=true;
-  
+
       addMsg(q,'user');
       inp.value='';
       chatHistory.push({role:'user',content:q});
-  
+
       const typing=addMsg('⋯','bot typing');
-  
+
+      // Build market context for detected crops
+      var systemMsg = CHAT_SYSTEM;
+      var crops = detectCropMentions(q);
+      if (crops.length > 0) {
+        var contextParts = [];
+        for (var ci = 0; ci < crops.length; ci++) {
+          var ctx = getCropMarketContext(crops[ci]);
+          if (ctx) contextParts.push(formatContextForAI(ctx));
+        }
+        if (contextParts.length > 0) {
+          systemMsg += '\n\n--- KISANSARTHI MARKET DATA ---\n' +
+            contextParts.join('\n\n') +
+            '\n--- END MARKET DATA ---\n\nUse the above real data to answer the farmer\'s question about these crops.';
+        }
+      }
+
       try{
         const res=await fetch('/api',{
           method:'POST',
@@ -1188,7 +1406,7 @@ window.onload = function() {
           body:JSON.stringify({
             model:'claude-haiku-4-5',
             max_tokens:600,
-            system: CHAT_SYSTEM,
+            system: systemMsg,
             messages:chatHistory.slice(-10)
           })
         });
