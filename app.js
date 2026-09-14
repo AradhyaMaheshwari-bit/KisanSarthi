@@ -779,6 +779,14 @@ window.onload = function() {
         <div style="font-size:11px;color:#999;margin-top:10px;text-align:center">Key is saved only in your browser. Never shared.</div>
       </div>`;
     document.body.appendChild(overlay);
+
+    // Dismiss on Escape key
+    function onKey(e){ if(e.key==='Escape'){overlay.remove();document.removeEventListener('keydown',onKey);} }
+    document.addEventListener('keydown',onKey);
+
+    // Dismiss on backdrop click (click outside the card)
+    overlay.addEventListener('click',function(e){ if(e.target===overlay){overlay.remove();document.removeEventListener('keydown',onKey);} });
+
     document.getElementById('key-save').onclick=function(){
       const val=document.getElementById('key-inp').value.trim();
       if(!val.startsWith('sk-ant')){
@@ -787,6 +795,7 @@ window.onload = function() {
       }
       saveApiKey(val);
       overlay.remove();
+      document.removeEventListener('keydown',onKey);
       onSuccess(val);
     };
   }
@@ -3149,6 +3158,34 @@ CROP RECOMMENDATION DATA — When a CropRecommendation result is provided in the
       farmerContext: { state: state, season: season, landAcres: acres }
     };
   }
+
+  /* ── Global exposure for inline onclick/onchange handlers ── */
+  window.goPage = goPage;
+  window.setLang = setLang;
+  window.selOpt = selOpt;
+  window.nextStep = nextStep;
+  window.prevStep = prevStep;
+  window.showResults = showResults;
+  window.resetAdvisor = resetAdvisor;
+  window.runCropRecommendations = runCropRecommendations;
+  window.qAsk = qAsk;
+  window.doChat = doChat;
+  window.selNFCrop = selNFCrop;
+  window.selIrr = selIrr;
+  window.generateFarmerPlan = generateFarmerPlan;
+  window.resetNFGuide = resetNFGuide;
+  window.showProfitability = showProfitability;
+  window.handleImageUpload = handleImageUpload;
+  window.demoScan = demoScan;
+  window.runScan = runScan;
+  window.resetScan = resetScan;
+  window.scSel = scSel;
+  window.checkSchemes = checkSchemes;
+  window.findMandis = findMandis;
+  window.resetMandi = resetMandi;
+  window.resetSchemes = resetSchemes;
+  window.loadMandiDistricts = loadMandiDistricts;
+  window.loadMandiAreas = loadMandiAreas;
 
   } // end bootApp()
 } // end window.onload
