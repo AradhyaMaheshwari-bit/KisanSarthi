@@ -2,11 +2,106 @@
    LANGUAGE
 ══════════════════════════════════════════════════════ */
 window.onload = function() {
-  fetch("price_data.json")
-    .then(response => response.json())
-   
-    .catch(error => console.error(error));
+  /* ═══════════════════════════════════════════════════════
+     PRICE DATA — loaded from price_data.json
+  ══════════════════════════════════════════════════════ */
+  let PRICE_DATA = null;
+  let PRICE_DATA_ERROR = null;
+
+  async function loadPriceData() {
+    try {
+      const resp = await fetch("price_data.json");
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const json = await resp.json();
+      if (!json || typeof json !== 'object' || Object.keys(json).length === 0) {
+        throw new Error('Empty or invalid dataset');
+      }
+      PRICE_DATA = json;
+    } catch (err) {
+      PRICE_DATA_ERROR = err.message || 'Failed to load price data';
+      console.error('Price data load error:', PRICE_DATA_ERROR);
+    }
   }
+
+  // Format crop key "wheat" to display name "Wheat"
+  function formatCropName(key) {
+    return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  }
+
+  // Get valid forecast (reject negative values)
+  function getValidForecast(crop) {
+    const val = crop.forecast_30d;
+    if (val == null || val < 0) return null;
+    return val;
+  }
+
+  // Get crop market context for AI integration (Phase 4 prep)
+  function getCropMarketContext(cropKey) {
+    if (!PRICE_DATA || !PRICE_DATA[cropKey]) return null;
+    const c = PRICE_DATA[cropKey];
+    return {
+      name: formatCropName(cropKey),
+      current_price: c.current_price,
+      unit: c.unit,
+      avg_7d: c.avg_7d,
+      change_30d_pct: c.change_30d_pct,
+      forecast_30d: getValidForecast(c),
+      last_updated: c.last_updated
+    };
+  }
+
+  // Validate forecast values — log invalid ones for pipeline correction
+  function validateForecasts() {
+    if (!PRICE_DATA) return;
+    const bad = Object.entries(PRICE_DATA)
+      .filter(([, v]) => v.forecast_30d != null && v.forecast_30d < 0);
+    if (bad.length > 0) {
+      console.warn('Data quality: invalid (negative) forecasts detected:');
+      bad.forEach(([k, v]) => console.warn(`  ${k}: forecast_30d = ${v.forecast_30d}`));
+    }
+  }
+
+  // Calculate dataset statistics from loaded data
+  function getDatasetStats() {
+    if (!PRICE_DATA) return null;
+    const crops = Object.keys(PRICE_DATA);
+    let totalObs = 0;
+    let minDate = '9999-99-99';
+    let maxDate = '0000-00-00';
+    crops.forEach(k => {
+      const hist = PRICE_DATA[k].history || [];
+      totalObs += hist.length;
+      hist.forEach(h => {
+        if (h.date < minDate) minDate = h.date;
+        if (h.date > maxDate) maxDate = h.date;
+      });
+    });
+    return {
+      cropCount: crops.length,
+      totalObservations: totalObs,
+      dateRange: { min: minDate, max: maxDate }
+    };
+  }
+
+  // Show price data error in the price list area
+  function showPriceError() {
+    const list = document.getElementById('price-list');
+    if (list) {
+      list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text2)">
+        <div style="font-size:14px;font-weight:500;margin-bottom:6px">Price data unavailable</div>
+        <div style="font-size:12px">${PRICE_DATA_ERROR || 'Could not load price dataset.'}</div>
+      </div>`;
+    }
+  }
+
+  // Initialize price data, then boot the UI
+  loadPriceData().then(() => {
+    validateForecasts();
+    bootApp();
+  });
+
+  function bootApp() {
+
   const T = {
     en:{
       home:'Home',advisor:'Advisor',prices:'Prices',weather:'Weather',chat:'AI Chat',newfarmer:'New Farmer',disease:'Scan Plant',schemes:'Schemes',mandi:'Mandi',
@@ -589,95 +684,248 @@ window.onload = function() {
   /* ═══════════════════════════════════════════════════════
      PRICES PAGE
   ══════════════════════════════════════════════════════ */
-  const allPrices=[
-    {em:'🌾',name:'Wheat (Gehun)',cat:'grain',msp:'₹2,275',price:2340,chg:4.2,dir:'up'},
-    {em:'🌽',name:'Maize (Makka)',cat:'grain',msp:'₹2,090',price:1890,chg:2.1,dir:'up'},
-    {em:'🍚',name:'Paddy (Dhan)',cat:'grain',msp:'₹2,183',price:2015,chg:0,dir:'flat'},
-    {em:'🫘',name:'Moong Dal',cat:'pulse',msp:'₹8,682',price:7240,chg:6.8,dir:'up'},
-    {em:'🌱',name:'Arhar Dal',cat:'pulse',msp:'₹7,000',price:6800,chg:-2.3,dir:'dn'},
-    {em:'🌿',name:'Chana Dal',cat:'pulse',msp:'₹5,440',price:5200,chg:1.1,dir:'flat'},
-    {em:'🌻',name:'Mustard (Sarson)',cat:'oil',msp:'₹5,650',price:5650,chg:0,dir:'flat'},
-    {em:'🌾',name:'Soybean',cat:'oil',msp:'₹4,600',price:4300,chg:-1.4,dir:'dn'},
-    {em:'🧅',name:'Onion (Pyaz)',cat:'veg',msp:'—',price:1200,chg:-8.3,dir:'dn'},
-    {em:'🥔',name:'Potato (Aloo)',cat:'veg',msp:'—',price:800,chg:-5.1,dir:'dn'},
-    {em:'🌶',name:'Chilli (Mirch)',cat:'veg',msp:'—',price:9800,chg:12.4,dir:'up'},
-    {em:'🌿',name:'Sugarcane (Ganna)',cat:'cash',msp:'₹355',price:355,chg:1.8,dir:'up'},
-    {em:'🌸',name:'Cotton (Kapas)',cat:'cash',msp:'₹7,020',price:6900,chg:-0.8,dir:'flat'},
-  ];
-  let activeCat='all';
-  function filterCat(cat,chip){
-    activeCat=cat;
-    document.querySelectorAll('.fchip').forEach(c=>c.classList.remove('on'));
+  // ── Dynamic price rendering from PRICE_DATA ─────────────
+  let activeCat = 'all';
+  let selectedCropKey = null;
+
+  function filterCat(cat, chip) {
+    activeCat = cat;
+    document.querySelectorAll('.fchip').forEach(c => c.classList.remove('on'));
     chip.classList.add('on');
     renderPrices();
   }
-  function renderPrices(){
-    const list=document.getElementById('price-list');
-    const filtered=activeCat==='all'?allPrices:allPrices.filter(p=>p.cat===activeCat);
-    list.innerHTML=filtered.map(p=>{
-      const clr=p.dir==='up'?'#2E6B0F':p.dir==='dn'?'#A02B2B':'var(--text2)';
-      const bg=p.dir==='up'?'#E8F5DB':p.dir==='dn'?'#FBEBEB':'var(--card2)';
-      const arrow=p.dir==='up'?'↑':p.dir==='dn'?'↓':'→';
-      return `<div class="price-item">
-        <div class="price-emo">${p.em}</div>
+
+  function renderPrices() {
+    const list = document.getElementById('price-list');
+    if (!PRICE_DATA) { showPriceError(); return; }
+    const keys = Object.keys(PRICE_DATA);
+    if (keys.length === 0) { showPriceError(); return; }
+
+    list.innerHTML = keys.map(key => {
+      const p = PRICE_DATA[key];
+      const chg = p.change_30d_pct || 0;
+      const dir = chg > 0 ? 'up' : chg < 0 ? 'dn' : 'flat';
+      const clr = dir === 'up' ? '#2E6B0F' : dir === 'dn' ? '#A02B2B' : 'var(--text2)';
+      const bg = dir === 'up' ? '#E8F5DB' : dir === 'dn' ? '#FBEBEB' : 'var(--card2)';
+      const arrow = dir === 'up' ? '↑' : dir === 'dn' ? '↓' : '→';
+      const name = formatCropName(key);
+      const selected = key === selectedCropKey ? 'border:2px solid var(--green);' : '';
+      return `<div class="price-item" style="cursor:pointer;${selected}" onclick="selectCrop('${key}')">
         <div style="flex:1;min-width:0">
-          <div class="price-nm">${p.name}</div>
-          <div class="price-loc">MSP: ${p.msp}</div>
+          <div class="price-nm">${name}</div>
+          <div class="price-loc">${p.unit || 'per quintal'}</div>
         </div>
         <div>
-          <div class="price-val" style="color:${clr}">₹${p.price.toLocaleString()}/q</div>
-          <div class="price-chg"><span style="background:${bg};color:${clr};font-size:10px;padding:2px 7px;border-radius:9px;font-weight:500">${arrow} ${Math.abs(p.chg)}%</span></div>
+          <div class="price-val" style="color:${clr}">₹${(p.current_price || 0).toLocaleString()}/q</div>
+          <div class="price-chg"><span style="background:${bg};color:${clr};font-size:10px;padding:2px 7px;border-radius:9px;font-weight:500">${arrow} ${Math.abs(chg).toFixed(1)}%</span></div>
         </div>
       </div>`;
     }).join('');
   }
-  renderPrices();
-  
-  let priceChartInst=null;
-  function initPriceChart(){
-    const canvas=document.getElementById('price-chart');
-    if(!canvas||canvas._done)return;
-    canvas._done=true;
-    const isDark=window.matchMedia('(prefers-color-scheme:dark)').matches;
-    const tc=isDark?'rgba(255,255,255,0.6)':'rgba(0,0,0,0.5)';
-    priceChartInst=new Chart(canvas,{
-      type:'line',
-      data:{
-        labels:['Jan','Feb','Mar','Apr','May','Jun'],
-        datasets:[
-          {label:'Wheat',data:[2250,2290,2310,2340,2380,2200],borderColor:'#2E6B0F',backgroundColor:'rgba(46,107,15,0.08)',tension:.4,fill:true,pointRadius:3},
-          {label:'Moong Dal',data:[7100,7240,7500,7240,7900,7200],borderColor:'#1A5FA8',backgroundColor:'rgba(26,95,168,0.06)',tension:.4,fill:true,pointRadius:3},
-          {label:'Mustard',data:[5500,5580,5620,5650,5400,5800],borderColor:'#B87214',backgroundColor:'rgba(184,114,20,0.06)',tension:.4,fill:true,pointRadius:3},
-        ]
+
+  // ── Crop selector → updates chart + forecast + insights ──
+  function selectCrop(key) {
+    selectedCropKey = key;
+    renderPrices();
+    updatePriceChart(key);
+    updateForecast(key);
+    updateInsights(key);
+    updateDatasetInfo();
+    // Hide hints when a crop is selected
+    const ch = document.getElementById('chart-hint');
+    const fh = document.getElementById('forecast-hint');
+    if (ch) ch.style.display = 'none';
+    if (fh) fh.style.display = 'none';
+  }
+  window.selectCrop = selectCrop;
+
+  // ── Dynamic price trend chart from history[] ──────────────
+  let priceChartInst = null;
+
+  function updatePriceChart(cropKey) {
+    if (!PRICE_DATA || !PRICE_DATA[cropKey]) return;
+    const crop = PRICE_DATA[cropKey];
+    const hist = crop.history || [];
+    if (hist.length === 0) return;
+
+    const labels = hist.map(h => {
+      const d = new Date(h.date);
+      return d.toLocaleDateString('en-IN', { month: 'short', year: '2-digit' });
+    });
+    const prices = hist.map(h => h.price);
+    const forecast = getValidForecast(crop);
+
+    // 7-day moving average
+    const ma7 = prices.map((_, i) => {
+      if (i < 6) return null;
+      const slice = prices.slice(i - 6, i + 1);
+      return Math.round(slice.reduce((a, b) => a + b, 0) / 7);
+    });
+
+    const datasets = [
+      {
+        label: formatCropName(cropKey) + ' Price',
+        data: prices,
+        borderColor: '#2E6B0F',
+        backgroundColor: 'rgba(46,107,15,0.08)',
+        tension: 0.4, fill: true, pointRadius: 2
       },
-      options:{responsive:true,interaction:{mode:'index',intersect:false},
-        plugins:{legend:{labels:{color:tc,font:{size:11},boxWidth:10,padding:14}}},
-        scales:{
-          x:{ticks:{color:tc,font:{size:11}},grid:{display:false}},
-          y:{ticks:{color:tc,font:{size:10},callback:v=>'₹'+Math.round(v).toLocaleString()},grid:{color:'rgba(128,128,128,0.08)'}}
+      {
+        label: '7-day Avg',
+        data: ma7,
+        borderColor: '#1A5FA8',
+        borderDash: [5, 3],
+        tension: 0.4, fill: false, pointRadius: 0
+      }
+    ];
+
+    // Append forecast as dashed line
+    if (forecast != null) {
+      const lastPrice = prices[prices.length - 1];
+      const forecastPts = Array(prices.length - 1).fill(null).concat([lastPrice, forecast]);
+      const forecastLabels = labels.concat(['+30d']);
+      datasets.push({
+        label: 'Forecast (Predicted)',
+        data: forecastPts,
+        borderColor: '#B87214',
+        borderDash: [6, 3],
+        tension: 0.4, fill: false, pointRadius: 0
+      });
+      // Use extended labels if forecast present
+      while (labels.length < forecastPts.length) labels.push('');
+      updateChartCanvas(labels, datasets);
+      return;
+    }
+    updateChartCanvas(labels, datasets);
+  }
+
+  function updateChartCanvas(labels, datasets) {
+    const canvas = document.getElementById('price-chart');
+    if (!canvas) return;
+    const isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+    const tc = isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)';
+
+    if (priceChartInst) {
+      priceChartInst.data.labels = labels;
+      priceChartInst.data.datasets = datasets;
+      priceChartInst.options.plugins.legend.labels.color = tc;
+      priceChartInst.options.scales.x.ticks.color = tc;
+      priceChartInst.options.scales.y.ticks.color = tc;
+      priceChartInst.update();
+      return;
+    }
+
+    priceChartInst = new Chart(canvas, {
+      type: 'line',
+      data: { labels, datasets },
+      options: {
+        responsive: true, interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { labels: { color: tc, font: { size: 11 }, boxWidth: 10, padding: 14 } } },
+        scales: {
+          x: { ticks: { color: tc, font: { size: 11 }, maxTicksLimit: 10 }, grid: { display: false } },
+          y: { ticks: { color: tc, font: { size: 10 }, callback: v => '₹' + Math.round(v).toLocaleString() }, grid: { color: 'rgba(128,128,128,0.08)' } }
         }
       }
     });
   }
-  
-  function selPred(el,crop,now,target,date,tip){
-    document.querySelectorAll('#pred-opts .wiz-opt').forEach(o=>o.classList.remove('sel'));
-    el.classList.add('sel');
-    const r=document.getElementById('pred-result');
-    r.style.display='block';
-    r.innerHTML=`<div class="slide-in">
+
+  // ── Dynamic forecast from dataset (replaces hardcoded selPred) ──
+  function updateForecast(cropKey) {
+    if (!PRICE_DATA || !PRICE_DATA[cropKey]) return;
+    const crop = PRICE_DATA[cropKey];
+    const r = document.getElementById('pred-result');
+    if (!r) return;
+
+    r.style.display = 'block';
+    const forecast = getValidForecast(crop);
+
+    if (forecast == null) {
+      r.innerHTML = `<div class="slide-in">
+        <div class="tip g" style="font-size:13px;color:var(--text2)">
+          Forecast unavailable for ${formatCropName(cropKey)}.
+          ${crop.forecast_30d != null && crop.forecast_30d < 0
+            ? '<br><em style="font-size:11px">Note: pipeline generated an invalid forecast value. This will be corrected in a future data pipeline update.</em>'
+            : ''}
+        </div>
+      </div>`;
+      return;
+    }
+
+    const change = crop.change_30d_pct || 0;
+    const trend = change > 0 ? 'rising' : change < 0 ? 'falling' : 'stable';
+    r.innerHTML = `<div class="slide-in">
       <div class="pred-grid">
         <div class="pred-cell" style="background:var(--card2);border:1px solid var(--border)">
           <div style="font-size:11px;color:var(--text2);font-weight:500">Current Price</div>
-          <div style="font-size:22px;font-weight:600;color:var(--text);margin-top:4px;letter-spacing:-.5px">${now}</div>
+          <div style="font-size:22px;font-weight:600;color:var(--text);margin-top:4px;letter-spacing:-.5px">₹${crop.current_price.toLocaleString()}/q</div>
         </div>
         <div class="pred-cell" style="background:var(--green-light);border:1px solid var(--green-pale)">
-          <div style="font-size:11px;color:#1a4a08;font-weight:500">AI Forecast</div>
-          <div style="font-size:22px;font-weight:600;color:var(--green);margin-top:4px;letter-spacing:-.5px">${target}</div>
+          <div style="font-size:11px;color:#1a4a08;font-weight:500">30-day Forecast</div>
+          <div style="font-size:22px;font-weight:600;color:var(--green);margin-top:4px;letter-spacing:-.5px">₹${forecast.toLocaleString()}/q</div>
         </div>
       </div>
-      <div class="tip g">📊 <strong>Best sell date for ${crop}: ${date}.</strong><br>${tip}</div>
+      <div class="tip g">📊 <strong>${formatCropName(cropKey)}:</strong> price trend is currently <strong>${trend}</strong> (${change > 0 ? '+' : ''}${change.toFixed(1)}% over 30 days). 30-day forecast: ₹${forecast.toLocaleString()}/quintal.</div>
     </div>`;
+  }
+
+  // ── Dynamic market insights (calculated from data) ────────
+  function updateInsights(cropKey) {
+    const el = document.getElementById('market-insights');
+    if (!el || !PRICE_DATA || !PRICE_DATA[cropKey]) return;
+    const crop = PRICE_DATA[cropKey];
+    const hist = crop.history || [];
+
+    let html = `<strong>${formatCropName(cropKey)}</strong> — Market Insights<br>`;
+
+    html += `Latest price: ₹${crop.current_price.toLocaleString()}/quintal<br>`;
+    html += `7-day average: ₹${crop.avg_7d.toLocaleString()}/quintal<br>`;
+
+    // Difference from average
+    const diff = crop.current_price - crop.avg_7d;
+    const diffPct = crop.avg_7d > 0 ? ((diff / crop.avg_7d) * 100).toFixed(1) : '—';
+    const diffDir = diff > 0 ? 'above' : diff < 0 ? 'below' : 'at';
+    if (diffPct !== '—') {
+      html += `Latest price is <strong>${Math.abs(diffPct)}% ${diffDir}</strong> the 7-day average.<br>`;
+    }
+
+    // 30-day change
+    if (crop.change_30d_pct != null) {
+      const sign = crop.change_30d_pct > 0 ? '+' : '';
+      html += `30-day change: <strong>${sign}${crop.change_30d_pct.toFixed(1)}%</strong><br>`;
+    }
+
+    // Historical max/min
+    if (hist.length > 0) {
+      const prices = hist.map(h => h.price);
+      const max = Math.max(...prices);
+      const min = Math.min(...prices);
+      html += `Historical range: ₹${min.toLocaleString()} — ₹${max.toLocaleString()}/quintal`;
+    }
+
+    el.innerHTML = html;
+  }
+
+  // ── Dynamic dataset info (calculated from loaded data) ────
+  function updateDatasetInfo() {
+    const el = document.getElementById('dataset-info');
+    if (!el) return;
+    const stats = getDatasetStats();
+    if (!stats) {
+      el.innerHTML = 'Dataset information unavailable.';
+      return;
+    }
+    el.innerHTML = `<strong>Dataset Information</strong><br>
+      Crops tracked: <strong>${stats.cropCount}</strong><br>
+      Total observations: <strong>${stats.totalObservations.toLocaleString()}</strong><br>
+      Date range: <strong>${stats.dateRange.min}</strong> to <strong>${stats.dateRange.max}</strong>`;
+  }
+
+  // ── Initialize price UI on load ───────────────────────────
+  if (PRICE_DATA) {
+    renderPrices();
+    updateDatasetInfo();
+  } else {
+    showPriceError();
   }
   
   /* ═══════════════════════════════════════════════════════
@@ -1675,3 +1923,6 @@ window.onload = function() {
     document.getElementById('mn-area').disabled=true;
     document.getElementById('mn-find-btn').disabled=true;
   }
+
+  } // end bootApp()
+} // end window.onload

@@ -341,18 +341,9 @@
     <!-- PRICES PAGE                                         -->
     <!-- ════════════════════════════════════════════════════ -->
     <div class="page" id="page-prices">
-      <div class="filter-row">
-        <div class="fchip on" onclick="filterCat('all',this)">All crops</div>
-        <div class="fchip" onclick="filterCat('grain',this)">Grains</div>
-        <div class="fchip" onclick="filterCat('pulse',this)">Pulses</div>
-        <div class="fchip" onclick="filterCat('veg',this)">Vegetables</div>
-        <div class="fchip" onclick="filterCat('oil',this)">Oilseeds</div>
-        <div class="fchip" onclick="filterCat('cash',this)">Cash crops</div>
-      </div>
-
       <div class="sec">
         <div class="sec-head">
-          <h3>Live Mandi Prices — April 2026</h3>
+          <h3>Live Mandi Prices</h3>
           <span class="badge up tag badge-live">● Live</span>
         </div>
         <div id="price-list"></div>
@@ -360,32 +351,33 @@
 
       <div class="sec">
         <div class="sec-head">
-          <h3>Price Trend Forecast</h3>
+          <h3>Price Trend</h3>
         </div>
+        <p id="chart-hint" style="font-size:12px;color:var(--text2);margin-bottom:8px">Select a crop above to view its price trend.</p>
         <canvas id="price-chart" height="155"></canvas>
       </div>
 
       <div class="sec">
         <div class="sec-head">
-          <h3>AI Price Predictor</h3>
-        </div>
-        <span class="wiz-label" style="font-size:13px;color:var(--text2);display:block;margin-bottom:8px">Pick a crop to
-          forecast:</span>
-        <div class="wiz-opts" id="pred-opts">
-          <div class="wiz-opt"
-            onclick="selPred(this,'Wheat','₹2,340','₹2,480','May 25','MSP ₹2,275 — current price is above MSP, good time to sell.')">
-            Wheat</div>
-          <div class="wiz-opt"
-            onclick="selPred(this,'Moong Dal','₹7,240','₹8,100','Jul 10','High demand before monsoon — hold if you have storage.')">
-            Moong Dal</div>
-          <div class="wiz-opt"
-            onclick="selPred(this,'Mustard','₹5,650','₹6,100','Jun 15','Dip expected in May — wait for the June rally.')">
-            Mustard</div>
-          <div class="wiz-opt"
-            onclick="selPred(this,'Paddy','₹2,015','₹2,200','Oct 20','Store after harvest — prices rise ~10% post-harvest.')">
-            Paddy</div>
+          <h3>30-Day Forecast</h3>
         </div>
         <div id="pred-result" style="display:none;margin-top:10px"></div>
+        <p id="forecast-hint" style="font-size:12px;color:var(--text2)">Select a crop to see its forecast.</p>
+      </div>
+
+      <div class="sec">
+        <div class="sec-head">
+          <h3>Market Insights</h3>
+        </div>
+        <div id="market-insights" style="font-size:13px;color:var(--text2);line-height:1.6">
+          Select a crop to view market insights.
+        </div>
+      </div>
+
+      <div class="sec" style="background:var(--card2);border-radius:10px;padding:12px 14px">
+        <div id="dataset-info" style="font-size:12px;color:var(--text2);line-height:1.6">
+          Loading dataset information...
+        </div>
       </div>
     </div>
 
