@@ -16,7 +16,7 @@ KisanSarthi is an AI-driven web application built for Indian farmers. It combine
 ## 🎯 Key Features
 
 - **Live Mandi Prices** — Real-time crop prices for 28+ crops sourced from APMC market data, with interactive trend charts and 7-day moving averages
-- **30-Day Price Forecast** — Linear Regression model (scikit-learn) projects crop prices 30 days ahead, helping farmers plan sowing and selling
+- **30-Day Price Forecast** — ML-powered forecasting with multiple model candidates, chronological validation, and farmer-friendly confidence indicators
 - **Plant Disease Detection** — Upload a photo of a diseased plant; Claude Vision API identifies the disease and recommends treatment
 - **AI Farming Assistant** — Conversational chatbot (Claude AI) answers questions about crops, soil, weather, pests, and government schemes
 - **Market Insights** — Per-crop analysis including price trends, volatility, historical range, and contextual observations
@@ -34,7 +34,8 @@ KisanSarthi/
 ├── analytics.js        # Agricultural analytics engine (standalone module)
 ├── app.js              # Frontend logic, AI integration, chart rendering
 ├── proxy.js            # Node.js reverse proxy for Claude API (CORS)
-├── script.py           # Python data pipeline — cleaning + ML forecasting
+├── script.py           # Python data pipeline — cleaning + data export
+├── forecasting.py      # ML forecasting engine — models, validation, features
 ├── price_data.json     # Processed crop price dataset (pipeline output)
 ├── package.json        # Node.js project config and scripts
 ├── requirements.txt    # Python dependencies
@@ -48,7 +49,7 @@ KisanSarthi/
 | Frontend | HTML5, CSS3, Vanilla JavaScript |
 | Charts | Chart.js (price trends, moving averages, forecast lines) |
 | AI / ML | Claude AI API (Haiku 4.5) — chat, disease detection via Vision |
-| Data Pipeline | Python, Pandas, NumPy, Scikit-learn (LinearRegression) |
+| Data Pipeline | Python, Pandas, NumPy, Scikit-learn (Ridge, LinearRegression, HistGradientBoosting) |
 | Server | Node.js reverse proxy (CORS handling for API calls) |
 | Data Source | APMC market crop price datasets |
 
@@ -65,9 +66,15 @@ Remove Outliers (IQR method)
         ↓
 Calculate 7-day moving average, 30-day % change
         ↓
-Linear Regression Forecast (30 days ahead, scikit-learn)
+ML Forecasting Engine (forecasting.py)
+  - Chronological validation (no future data leakage)
+  - Multiple model candidates: Naive, Mean, Moving Average,
+    Linear Regression, Ridge, HistGradientBoosting
+  - Log-transform target (prevents negative forecasts)
+  - Observation-based features (handles irregular time gaps)
+  - Automatic model selection (ML only if better than naive)
         ↓
-Export to price_data.json (28 crops, 60-record history each)
+Export to price_data.json (28 crops, forecasts + model metadata)
         ↓
 Frontend renders live charts, forecasts, and insights
 ```
@@ -142,14 +149,14 @@ All project dependencies are isolated to this repository:
 | Anomaly Detection | Z-score method identifying statistically unusual price points |
 | Crop Rankings | Top gainers, losers, most volatile, most stable |
 | Data Quality | Per-crop sufficiency indicators, sparse data detection |
-| Forecasting | 30-day Linear Regression projection per crop |
+| Forecasting | ML-driven 30-day forecast with chronological validation, automatic model selection, and farmer-friendly confidence indicators |
 | Market Context | Per-crop insights: price range, trend direction, volatility |
 | Disease Detection | Image-based plant disease identification via Claude Vision |
 
 ## 🗺 Roadmap
 
 - [x] Agricultural data analytics (statistics, trends, volatility, anomalies, rankings)
-- [ ] Improved forecasting with advanced ML models (Random Forest, LSTM)
+- [x] Improved forecasting with ML models (Ridge, Linear Regression, Gradient Boosting) and chronological validation
 - [ ] Real-time price updates via live APMC data feeds
 - [ ] Weather integration for location-specific farming advice
 - [ ] Government scheme eligibility checker
