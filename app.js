@@ -1587,6 +1587,13 @@ RULES:
     </div>`;
   
     document.getElementById('nf-output').innerHTML = html;
+
+    // Show profitability button for crops with economics data
+    const profBtnWrap = document.getElementById('nf-profit-btn-wrap');
+    if (profBtnWrap && typeof CropEconomics !== 'undefined') {
+      const econKey = nfCrop.toLowerCase();
+      profBtnWrap.style.display = CropEconomics.CROP_ECONOMICS[econKey] ? 'block' : 'none';
+    }
   }
   
   function getNFPlan(crop, acres, irr) {
@@ -1851,6 +1858,10 @@ RULES:
     nfCrop = null; nfIrr = null;
     document.getElementById('nf-selector').style.display = 'block';
     document.getElementById('nf-plan').style.display = 'none';
+    document.getElementById('nf-profit').style.display = 'none';
+    document.getElementById('nf-profit').innerHTML = '';
+    const profBtnWrap = document.getElementById('nf-profit-btn-wrap');
+    if(profBtnWrap) profBtnWrap.style.display = 'none';
     document.querySelectorAll('.nf-crop-btn').forEach(b => b.classList.remove('sel'));
     ['irr-canal','irr-bore','irr-rain'].forEach(id => {
       const el = document.getElementById(id);
@@ -1859,6 +1870,220 @@ RULES:
     const btn = document.getElementById('nf-generate-btn');
     if(btn) btn.disabled = true;
     window.scrollTo({ top: 0 });
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     CROP PROFITABILITY CALCULATOR (Phase 7)
+  ══════════════════════════════════════════════════════ */
+
+  function showProfitability() {
+    if (!nfCrop || !PRICE_DATA) return;
+    const acres = +(document.getElementById('nf-acres').value);
+    const result = CropEconomics.calculateProfitability(nfCrop, acres, nfIrr, PRICE_DATA);
+    const comparison = CropEconomics.compareCrops(acres, nfIrr, PRICE_DATA);
+    const isHi = lang === 'hi';
+    renderProfitability(result, comparison, isHi);
+    document.getElementById('nf-profit').style.display = 'block';
+    document.getElementById('nf-profit').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function renderProfitability(result, comparison, isHi) {
+    if (!result || !result.available) {
+      document.getElementById('nf-profit').innerHTML =
+        '<div class="sec slide-in"><div class="tip a">' +
+        (isHi ? '⚠️ इस फसल के लिए बाज़ार मूल्य उपलब्ध नहीं है।' :
+                '⚠️ Market price not available for this crop.') +
+        '</div></div>';
+      return;
+    }
+
+    var fmt = CropEconomics.formatINR;
+    var pFmt = function(v) { return v != null ? '₹' + Math.round(v).toLocaleString('en-IN') : '—'; };
+
+    // Determine profit status
+    var profitIcon = result.estimatedNetReturn > 0 ? '📈' : '📉';
+    var profitText = result.estimatedNetReturn > 0
+      ? (isHi ? 'अनुमानित लाभ' : 'Estimated Net Return')
+      : (isHi ? 'अनुमानित हानि' : 'Estimated Net Loss');
+
+    // Break-even status
+    var beStatus = '';
+    if (result.marginPerQuintal != null) {
+      if (result.marginPerQuintal > 500) beStatus = isHi ? '✅ ब्रेक-ईवन से ऊपर' : '✅ Above break-even';
+      else if (result.marginPerQuintal > 0) beStatus = isHi ? '⚠️ ब्रेक-ईवन के करीब' : '⚠️ Near break-even';
+      else beStatus = isHi ? '🔴 ब्रेक-ईवन से नीचे' : '🔴 Below break-even';
+    }
+
+    var html = '';
+
+    // ── Hero banner ──
+    html += '<div class="result-hero slide-in" style="background:linear-gradient(135deg,#0f766e,#064e3b)">';
+    html += '<div class="res-label">' + (isHi ? 'अनुमानित लाभ-हानि विश्लेषण' : 'ESTIMATED PROFITABILITY ANALYSIS') + '</div>';
+    html += '<div class="big">' + profitIcon + ' ' + result.cropName + '</div>';
+    html += '<div class="sub">' + result.acres + ' ' + (isHi ? 'एकड़' : 'acres') + ' • ' +
+            (isHi ? 'सिंचाई: ' : 'Irrigation: ') +
+            (result.irrigationType === 'canal' ? (isHi ? 'नहर' : 'Canal') :
+             result.irrigationType === 'bore' ? (isHi ? 'बोरवेल' : 'Borewell') :
+             (isHi ? 'वर्षा' : 'Rain-fed')) + '</div>';
+    html += '</div>';
+
+    // ── Key metrics grid ──
+    html += '<div class="sec slide-in">';
+    html += '<div class="sec-head"><h3>' + (isHi ? '📊 मुख्य आँकड़े' : '📊 Key Metrics') + '</h3></div>';
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">';
+
+    // Market price
+    html += '<div class="profit-metric-card">';
+    html += '<div class="profit-metric-label">' + (isHi ? 'बाज़ार मूल्य' : 'Market Price') + '</div>';
+    html += '<div class="profit-metric-value">' + pFmt(result.marketPrice) + '</div>';
+    html += '<div class="profit-metric-sub">' + (isHi ? 'प्रति क्विंटल' : 'per quintal') + '</div>';
+    html += '</div>';
+
+    // Expected yield
+    html += '<div class="profit-metric-card">';
+    html += '<div class="profit-metric-label">' + (isHi ? 'अपेक्षित उपज' : 'Expected Yield') + '</div>';
+    html += '<div class="profit-metric-value">' + result.expectedYieldPerAcre + ' ' + (isHi ? 'क्विंटल' : 'q') + '</div>';
+    html += '<div class="profit-metric-sub">' + (isHi ? 'प्रति एकड़' : 'per acre') + '</div>';
+    html += '</div>';
+
+    // Estimated revenue
+    html += '<div class="profit-metric-card">';
+    html += '<div class="profit-metric-label">' + (isHi ? 'अनुमानित आय' : 'Estimated Revenue') + '</div>';
+    html += '<div class="profit-metric-value" style="color:var(--green)">' + fmt(result.estimatedRevenue) + '</div>';
+    html += '<div class="profit-metric-sub">' + (isHi ? result.acres + ' एकड़ के लिए' : 'for ' + result.acres + ' acres') + '</div>';
+    html += '</div>';
+
+    // Total cost
+    html += '<div class="profit-metric-card">';
+    html += '<div class="profit-metric-label">' + (isHi ? 'कुल लागत' : 'Total Cost') + '</div>';
+    html += '<div class="profit-metric-value" style="color:var(--red)">' + fmt(result.totalCost) + '</div>';
+    html += '<div class="profit-metric-sub">' + fmt(result.cultivationCostPerAcre) + ' ' + (isHi ? 'प्रति एकड़' : '/ acre') + '</div>';
+    html += '</div>';
+
+    html += '</div></div>';
+
+    // ── Net return + ROI + Break-even ──
+    html += '<div class="sec slide-in">';
+    html += '<div class="sec-head"><h3>' + profitText + '</h3></div>';
+
+    html += '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">';
+
+    // Net return
+    html += '<div class="profit-metric-card" style="border-left:3px solid var(--' + (result.estimatedNetReturn > 0 ? 'green' : 'red') + ')">';
+    html += '<div class="profit-metric-label">' + (isHi ? 'शुद्ध लाभ' : 'Net Return') + '</div>';
+    html += '<div class="profit-metric-value" style="color:var(--' + (result.estimatedNetReturn > 0 ? 'green' : 'red') + ');font-size:18px">' + fmt(result.estimatedNetReturn) + '</div>';
+    html += '<div class="profit-metric-sub">' + (isHi ? result.acres + ' एकड़ के लिए' : 'for ' + result.acres + ' acres') + '</div>';
+    html += '</div>';
+
+    // ROI
+    html += '<div class="profit-metric-card">';
+    html += '<div class="profit-metric-label">ROI</div>';
+    html += '<div class="profit-metric-value" style="color:var(--blue);font-size:18px">' + (result.roi != null ? result.roi.toFixed(1) + '%' : '—') + '</div>';
+    html += '<div class="profit-metric-sub">' + (isHi ? 'निवेश पर रिटर्न' : 'Return on Investment') + '</div>';
+    html += '</div>';
+
+    // Break-even
+    html += '<div class="profit-metric-card">';
+    html += '<div class="profit-metric-label">' + (isHi ? 'ब्रेक-ईवन मूल्य' : 'Break-even Price') + '</div>';
+    html += '<div class="profit-metric-value" style="font-size:18px">' + pFmt(result.breakEvenPrice) + '</div>';
+    html += '<div class="profit-metric-sub">' + beStatus + '</div>';
+    html += '</div>';
+
+    html += '</div>';
+
+    // Margin detail
+    if (result.marginPerQuintal != null) {
+      html += '<div class="tip ' + (result.marginPerQuintal > 0 ? 'g' : 'r') + '" style="margin-top:10px">';
+      html += (isHi ? '💰 प्रति क्विंटल मार्जिन: ' : '💰 Margin per quintal: ') +
+              pFmt(result.marginPerQuintal) +
+              (isHi ? ' (बाज़ार मूल्य ' + pFmt(result.marketPrice) + ' − ब्रेक-ईवन ' + pFmt(result.breakEvenPrice) + ')' :
+                      ' (Market ' + pFmt(result.marketPrice) + ' − Break-even ' + pFmt(result.breakEvenPrice) + ')');
+      html += '</div>';
+    }
+
+    html += '</div>';
+
+    // ── Cost breakdown ──
+    html += '<div class="sec slide-in">';
+    html += '<div class="sec-head"><h3>' + (isHi ? '💸 लागत विवरण' : '💸 Cost Breakdown') + '</h3></div>';
+    html += '<div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px">';
+    html += '<div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px">';
+    html += '<span style="color:var(--text2)">' + (isHi ? 'खेती लागत (प्रति एकड़)' : 'Cultivation cost (per acre)') + '</span>';
+    html += '<span style="font-weight:600;color:var(--text)">' + fmt(result.cultivationCostPerAcre) + '</span>';
+    html += '</div>';
+    html += '<div style="display:flex;justify-content:space-between;margin-bottom:6px;font-size:13px">';
+    html += '<span style="color:var(--text2)">' + (isHi ? 'एकड़ संख्या' : 'Number of acres') + '</span>';
+    html += '<span style="font-weight:600;color:var(--text)">' + result.acres + '</span>';
+    html += '</div>';
+    html += '<div style="border-top:1px dashed var(--border);padding-top:6px;margin-top:6px;display:flex;justify-content:space-between;font-size:14px;font-weight:700">';
+    html += '<span style="color:var(--text)">' + (isHi ? 'कुल लागत' : 'Total Cost') + '</span>';
+    html += '<span style="color:var(--red)">' + fmt(result.totalCost) + '</span>';
+    html += '</div>';
+    html += '</div></div>';
+
+    // ── Comparison table ──
+    if (comparison && comparison.length > 1) {
+      html += '<div class="sec slide-in">';
+      html += '<div class="sec-head"><h3>' + (isHi ? '📊 फसल तुलना' : '📊 Crop Comparison') + '</h3>';
+      html += '<span class="badge" style="background:var(--green-light);color:var(--green)">' + comparison.length + ' ' + (isHi ? 'फसलें' : 'crops') + '</span></div>';
+      html += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">';
+      html += '<thead><tr style="border-bottom:2px solid var(--border)">';
+      html += '<th style="text-align:left;padding:8px 6px;color:var(--text2);font-weight:600">' + (isHi ? 'फसल' : 'Crop') + '</th>';
+      html += '<th style="text-align:right;padding:8px 6px;color:var(--text2);font-weight:600">' + (isHi ? 'मूल्य' : 'Price') + '</th>';
+      html += '<th style="text-align:right;padding:8px 6px;color:var(--text2);font-weight:600">' + (isHi ? 'शुद्ध लाभ' : 'Net Return') + '</th>';
+      html += '<th style="text-align:right;padding:8px 6px;color:var(--text2);font-weight:600">ROI</th>';
+      html += '</tr></thead><tbody>';
+
+      comparison.forEach(function (r, i) {
+        var isCurrent = r.cropKey === nfCrop;
+        var rowBg = isCurrent ? 'background:var(--blue-light)' : '';
+        var rowStyle = i < comparison.length - 1 ? 'border-bottom:1px solid var(--border)' : '';
+        html += '<tr style="' + rowBg + ';' + rowStyle + '">';
+        html += '<td style="padding:8px 6px;font-weight:' + (isCurrent ? '700' : '500') + ';color:var(--text)">' +
+                (isCurrent ? '▸ ' : '') + r.cropName + '</td>';
+        html += '<td style="padding:8px 6px;text-align:right;color:var(--text2)">' + pFmt(r.marketPrice) + '</td>';
+        html += '<td style="padding:8px 6px;text-align:right;font-weight:600;color:var(--' + (r.estimatedNetReturn > 0 ? 'green' : 'red') + ')">' +
+                fmt(r.estimatedNetReturn) + '</td>';
+        html += '<td style="padding:8px 6px;text-align:right;color:var(--blue)">' + (r.roi != null ? r.roi.toFixed(0) + '%' : '—') + '</td>';
+        html += '</tr>';
+      });
+
+      html += '</tbody></table></div></div>';
+    }
+
+    // ── Assumptions & sources ──
+    html += '<div class="sec slide-in">';
+    html += '<div class="sec-head"><h3>' + (isHi ? '📝 मान्यताएँ और स्रोत' : '📝 Assumptions & Sources') + '</h3></div>';
+    html += '<div class="tip a">';
+    html += '<strong>' + (isHi ? '⚠️ अस्वीकरण:' : '⚠️ Disclaimer:') + '</strong> ' +
+            (isHi
+              ? 'ये अनुमान चुनी गई मान्यताओं और उपलब्ध बाज़ार/आर्थिक डेटा पर आधारित हैं। वास्तविक लागत, उपज और रिटर्न स्थान, मौसम, खेती की प्रथाओं और बाज़ार की स्थितियों के अनुसार भिन्न हो सकते हैं।'
+              : 'Estimates are based on the selected assumptions and available market/economic data. Actual costs, yields and returns vary by location, season, farming practices and market conditions.');
+    html += '</div>';
+    html += '<div style="font-size:12px;color:var(--text2);line-height:1.7;margin-top:8px">';
+    html += '<div><strong>' + (isHi ? 'बाज़ार मूल्य:' : 'Market price:') + '</strong> ' + (isHi ? 'APMC डेटा (price_data.json)' : 'APMC data (price_data.json)') + '</div>';
+    html += '<div><strong>' + (isHi ? 'उपज मान्यता:' : 'Yield assumption:') + '</strong> ' + result.expectedYieldPerAcre + ' ' + result.yieldUnit + ' ' + (isHi ? 'प्रति एकड़ (राष्ट्रीय औसत)' : 'per acre (national average)') + '</div>';
+    html += '<div><strong>' + (isHi ? 'लागत मान्यता:' : 'Cost assumption:') + '</strong> ' + fmt(result.cultivationCostPerAcre) + ' ' + (isHi ? 'प्रति एकड़' : 'per acre') + ' (' + (isHi ? 'अनुमानित' : 'estimated') + ')</div>';
+    html += '<div><strong>' + (isHi ? 'सिंचाई:' : 'Irrigation:') + '</strong> ' +
+            (result.irrigationType === 'canal' ? (isHi ? 'नहर' : 'Canal') :
+             result.irrigationType === 'bore' ? (isHi ? 'बोरवेल' : 'Borewell') :
+             (isHi ? 'वर्षा' : 'Rain-fed')) + '</div>';
+    html += '<div style="margin-top:6px"><strong>' + (isHi ? 'स्रोत:' : 'Source:') + '</strong> ' + result.source + '</div>';
+    html += '<div style="font-style:italic;color:var(--text2)">' + result.sourceNote + '</div>';
+    html += '</div></div>';
+
+    // ── Print button ──
+    html += '<div class="disclaimer-print" style="display:none">';
+    html += (isHi
+      ? 'यह रिपोर्ट केवल संदर्भ के लिए है। अनुमान राष्ट्रीय औसत और उपलब्ध बाज़ार डेटा पर आधारित हैं। वास्तविक परिणाम भिन्न हो सकते हैं। | KisanSarthi — किसान सारथी'
+      : 'This report is for reference only. Estimates based on national averages and available market data. Actual results may vary. | KisanSarthi — किसान सारथी');
+    html += '</div>';
+    html += '<div style="text-align:center;padding:12px 0">';
+    html += '<button class="btn-next" style="background:var(--text2);color:#fff;padding:10px 24px" onclick="window.print()">' +
+            (isHi ? '🖨️ प्रिंट रिपोर्ट' : '🖨️ Print Report') + '</button>';
+    html += '</div>';
+
+    document.getElementById('nf-profit').innerHTML = html;
   }
   
   /* ═══════════════════════════════════════════════════════

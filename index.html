@@ -624,9 +624,20 @@
           Generating your personalized farming plan…
         </div>
         <div id="nf-output" style="display:none"></div>
+
+        <!-- Profitability Calculator Button -->
+        <div id="nf-profit-btn-wrap" style="display:none;margin-top:12px">
+          <button class="btn-next btn-full" style="background:#0f766e" onclick="showProfitability()">
+            💰 View Profitability Analysis
+          </button>
+        </div>
+
         <button class="btn-next btn-full" style="background:var(--blue);margin-top:4px" onclick="resetNFGuide()">←
           Generate New Plan</button>
       </div>
+
+      <!-- Profitability Calculator Output -->
+      <div id="nf-profit" style="display:none"></div>
     </div>
 
     <!-- ════════════════════════════════════════════════════ -->
@@ -874,6 +885,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
   <script src="analytics.js"></script>
+  <script src="crop-economics.js"></script>
   <script src="app.js"></script>
 </body>
 
