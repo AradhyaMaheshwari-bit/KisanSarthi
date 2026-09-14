@@ -1,0 +1,22 @@
+{
+  "name": "kisansarthi",
+  "version": "1.0.0",
+  "description": "AI-Powered Agricultural Intelligence & Decision Support System for Indian Farmers",
+  "main": "proxy.js",
+  "scripts": {
+    "start": "node proxy.js",
+    "dev": "node proxy.js"
+  },
+  "keywords": [
+    "agriculture",
+    "farming",
+    "ai",
+    "india",
+    "crop-prices"
+  ],
+  "author": "KisanSarthi Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
