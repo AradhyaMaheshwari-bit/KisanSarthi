@@ -863,56 +863,219 @@ window.onload = function() {
     </div>`;
   }
 
-  // ── Dynamic market insights (calculated from data) ────────
+  // ── Dynamic market insights (analytics-powered) ──────────
   function updateInsights(cropKey) {
-    const el = document.getElementById('market-insights');
-    if (!el || !PRICE_DATA || !PRICE_DATA[cropKey]) return;
-    const crop = PRICE_DATA[cropKey];
-    const hist = crop.history || [];
+    renderCropAnalytics(cropKey);
+  }
 
-    let html = `<strong>${formatCropName(cropKey)}</strong> — Market Insights<br>`;
+  // ── Dynamic dataset info (redirects to analytics quality) ──
+  function updateDatasetInfo() {
+    renderDataQuality();
+  }
 
-    html += `Latest price: ₹${crop.current_price.toLocaleString()}/quintal<br>`;
-    html += `7-day average: ₹${crop.avg_7d.toLocaleString()}/quintal<br>`;
+  // ── Analytics Overview (all crops summary) ──────────────
+  function renderAnalyticsOverview() {
+    const el = document.getElementById('analytics-overview');
+    if (!el || !PRICE_DATA || !window.KisanAnalytics) return;
 
-    // Difference from average
-    const diff = crop.current_price - crop.avg_7d;
-    const diffPct = crop.avg_7d > 0 ? ((diff / crop.avg_7d) * 100).toFixed(1) : '—';
-    const diffDir = diff > 0 ? 'above' : diff < 0 ? 'below' : 'at';
-    if (diffPct !== '—') {
-      html += `Latest price is <strong>${Math.abs(diffPct)}% ${diffDir}</strong> the 7-day average.<br>`;
+    const overview = KisanAnalytics.generateOverview(PRICE_DATA);
+    if (!overview) { el.innerHTML = '<p style="font-size:12px;color:var(--text2)">Unable to generate overview.</p>'; return; }
+
+    el.innerHTML = `
+      <div class="analytics-grid">
+        <div class="analytics-stat">
+          <div class="a-val">${overview.totalCrops}</div>
+          <div class="a-lbl">Crops analyzed</div>
+        </div>
+        <div class="analytics-stat">
+          <div class="a-val">${overview.totalObservations.toLocaleString()}</div>
+          <div class="a-lbl">Total observations</div>
+        </div>
+        <div class="analytics-stat">
+          <div class="a-val" style="color:var(--red)">${overview.mostVolatile.name}</div>
+          <div class="a-lbl">Most volatile (${overview.mostVolatile.cv}%)</div>
+        </div>
+        <div class="analytics-stat">
+          <div class="a-val" style="color:var(--green)">${overview.mostStable.name}</div>
+          <div class="a-lbl">Most stable (${overview.mostStable.cv}%)</div>
+        </div>
+        <div class="analytics-stat">
+          <div class="a-val" style="color:var(--green)">↑ ${overview.topGainer.name}</div>
+          <div class="a-lbl">Top gainer (+${overview.topGainer.change}%)</div>
+        </div>
+        <div class="analytics-stat">
+          <div class="a-val" style="color:var(--red)">↓ ${overview.topLoser.name}</div>
+          <div class="a-lbl">Top loser (${overview.topLoser.change}%)</div>
+        </div>
+      </div>
+      <div class="analytics-note">
+        <strong>Coverage:</strong> ${overview.dateRange.min} to ${overview.dateRange.max} ·
+        ${overview.totalObservations} data points across ${overview.totalCrops} crops
+      </div>`;
+  }
+
+  // ── Per-Crop Analytics Detail ────────────────────────────
+  function renderCropAnalytics(cropKey) {
+    const el = document.getElementById('crop-analytics');
+    if (!el || !PRICE_DATA || !window.KisanAnalytics) return;
+
+    if (!cropKey || !PRICE_DATA[cropKey]) {
+      el.innerHTML = '<p style="font-size:12px;color:var(--text2)">Select a crop above to view detailed analytics.</p>';
+      return;
     }
 
-    // 30-day change
-    if (crop.change_30d_pct != null) {
-      const sign = crop.change_30d_pct > 0 ? '+' : '';
-      html += `30-day change: <strong>${sign}${crop.change_30d_pct.toFixed(1)}%</strong><br>`;
+    const analysis = KisanAnalytics.analyzeCrop(PRICE_DATA[cropKey]);
+    if (!analysis) { el.innerHTML = '<p style="font-size:12px;color:var(--text2)">Unable to analyze this crop.</p>'; return; }
+
+    const s = analysis.stats;
+    const t = analysis.trend;
+    const v = analysis.volatility;
+    const a = analysis.anomalies;
+
+    // Trend icon/class
+    const trendIcon = t.direction === 'rising' ? '📈' : t.direction === 'falling' ? '📉' : '➡️';
+    const trendClass = t.direction === 'rising' ? 'up' : t.direction === 'falling' ? 'dn' : 'flat';
+
+    // Volatility class
+    const volClass = v.level === 'volatile' ? 'dn' : v.level === 'moderate' ? 'flat' : 'up';
+
+    let html = `<div class="analytics-detail">`;
+    html += `<div style="font-size:16px;font-weight:600;color:var(--text);margin-bottom:10px">${formatCropName(cropKey)}</div>`;
+
+    // Key metrics
+    html += `<div class="analytics-metric"><span class="am-label">Current Price</span><span class="am-value">₹${analysis.currentPrice.toLocaleString()}/q</span></div>`;
+    html += `<div class="analytics-metric"><span class="am-label">Historical Average</span><span class="am-value">₹${s.average.toLocaleString()}/q</span></div>`;
+    html += `<div class="analytics-metric"><span class="am-label">Median</span><span class="am-value">₹${s.median.toLocaleString()}/q</span></div>`;
+    html += `<div class="analytics-metric"><span class="am-label">Range</span><span class="am-value">₹${s.min.toLocaleString()} — ₹${s.max.toLocaleString()}</span></div>`;
+    html += `<div class="analytics-metric"><span class="am-label">Observations</span><span class="am-value">${s.count} (${s.dateSpanDays} days)</span></div>`;
+
+    // Trend
+    html += `<div class="analytics-metric"><span class="am-label">Trend</span><span class="am-value"><span class="tag ${trendClass}">${trendIcon} ${t.direction}</span></span></div>`;
+    html += `<div class="analytics-metric"><span class="am-label">Recent vs Historical</span><span class="am-value">${t.recentChangePct > 0 ? '+' : ''}${t.recentChangePct}%</span></div>`;
+    html += `<div class="analytics-metric"><span class="am-label">Confidence</span><span class="am-value">${t.confidence}</span></div>`;
+
+    // Volatility
+    html += `<div class="analytics-metric"><span class="am-label">Volatility</span><span class="am-value"><span class="tag ${volClass}">${v.level} (${v.cv}%)</span></span></div>`;
+
+    // Deviation from forecast
+    if (analysis.forecastValid) {
+      html += `<div class="analytics-metric"><span class="am-label">vs Forecast</span><span class="am-value">${analysis.deviationPct}% ${analysis.deviationDir}</span></div>`;
     }
 
-    // Historical max/min
-    if (hist.length > 0) {
-      const prices = hist.map(h => h.price);
-      const max = Math.max(...prices);
-      const min = Math.min(...prices);
-      html += `Historical range: ₹${min.toLocaleString()} — ₹${max.toLocaleString()}/quintal`;
+    // Anomalies
+    if (a.count > 0) {
+      html += `<div class="analytics-metric"><span class="am-label">Anomalies</span><span class="am-value">${a.count} detected</span></div>`;
+    }
+
+    html += `</div>`; // end analytics-detail
+
+    // Interpretation
+    if (analysis.interpretation && analysis.interpretation.length > 0) {
+      html += `<div class="interp-box">`;
+      analysis.interpretation.forEach(function(line) {
+        html += `<p>${line}</p>`;
+      });
+      html += `</div>`;
     }
 
     el.innerHTML = html;
   }
 
-  // ── Dynamic dataset info (calculated from loaded data) ────
-  function updateDatasetInfo() {
-    const el = document.getElementById('dataset-info');
-    if (!el) return;
-    const stats = getDatasetStats();
-    if (!stats) {
-      el.innerHTML = 'Dataset information unavailable.';
-      return;
+  // ── Crop Rankings (tabbed) ──────────────────────────────
+  let rankingsData = null;
+  let activeRankTab = 'gainers';
+
+  function renderRankings(tab) {
+    const el = document.getElementById('crop-rankings');
+    if (!el || !PRICE_DATA || !window.KisanAnalytics) return;
+
+    if (tab !== undefined) activeRankTab = tab;
+    if (!rankingsData) rankingsData = KisanAnalytics.rankCrops(PRICE_DATA);
+    if (!rankingsData) { el.innerHTML = '<p style="font-size:12px;color:var(--text2)">Unable to generate rankings.</p>'; return; }
+
+    const tabs = [
+      { key: 'gainers', label: '📈 Top Gainers' },
+      { key: 'losers', label: '📉 Top Losers' },
+      { key: 'volatile', label: '⚡ Most Volatile' },
+      { key: 'stable', label: '🔒 Most Stable' }
+    ];
+
+    let html = `<div class="analytics-tabs">`;
+    tabs.forEach(function(t) {
+      html += `<button class="a-tab${activeRankTab === t.key ? ' on' : ''}" onclick="renderRankings('${t.key}')">${t.label}</button>`;
+    });
+    html += `</div>`;
+
+    // Get data for active tab
+    let items = [];
+    var unitLabel = '';
+    if (activeRankTab === 'gainers') {
+      items = rankingsData.topGainers;
+      unitLabel = '%';
+    } else if (activeRankTab === 'losers') {
+      items = rankingsData.topLosers;
+      unitLabel = '%';
+    } else if (activeRankTab === 'volatile') {
+      items = rankingsData.mostVolatile;
+      unitLabel = '% CV';
+    } else if (activeRankTab === 'stable') {
+      items = rankingsData.mostStable;
+      unitLabel = '% CV';
     }
-    el.innerHTML = `<strong>Dataset Information</strong><br>
-      Crops tracked: <strong>${stats.cropCount}</strong><br>
-      Total observations: <strong>${stats.totalObservations.toLocaleString()}</strong><br>
-      Date range: <strong>${stats.dateRange.min}</strong> to <strong>${stats.dateRange.max}</strong>`;
+
+    if (items.length === 0) {
+      html += '<p style="font-size:12px;color:var(--text2)">No data available for this ranking.</p>';
+    } else {
+      items.forEach(function(item) {
+        const isTop = item.rank <= 3;
+        const valColor = activeRankTab === 'gainers' ? 'var(--green)' :
+                         activeRankTab === 'losers' ? 'var(--red)' :
+                         activeRankTab === 'volatile' ? 'var(--amber)' : 'var(--green)';
+        html += `<div class="analytics-ranking">
+          <span class="rank-num${isTop ? ' top' : ''}">${item.rank}</span>
+          <span class="rank-name">${item.name}</span>
+          <span class="rank-val" style="color:${valColor}">${activeRankTab === 'gainers' || activeRankTab === 'losers' ? (item.value > 0 ? '+' : '') + item.value : item.value}${unitLabel}</span>
+        </div>`;
+      });
+    }
+
+    el.innerHTML = html;
+  }
+  window.renderRankings = renderRankings;
+
+  // ── Data Quality Report ──────────────────────────────────
+  function renderDataQuality() {
+    const el = document.getElementById('data-quality');
+    if (!el || !PRICE_DATA || !window.KisanAnalytics) return;
+
+    const report = KisanAnalytics.generateDataQualityReport(PRICE_DATA);
+    if (!report) { el.innerHTML = '<p style="font-size:12px;color:var(--text2)">Unable to generate data quality report.</p>'; return; }
+
+    let html = `<div class="analytics-grid">`;
+    html += `<div class="analytics-stat"><div class="a-val">${report.sufficientCrops}/${report.totalCrops}</div><div class="a-lbl">Crops with sufficient data (15+ obs)</div></div>`;
+    html += `<div class="analytics-stat"><div class="a-val">${report.avgObsPerCrop}</div><div class="a-lbl">Avg observations per crop</div></div>`;
+    html += `</div>`;
+
+    // Sparse crops list
+    if (report.sparseCrops.length > 0) {
+      html += `<div style="margin-bottom:10px">`;
+      report.sparseCrops.forEach(function(c) {
+        const quality = c.count >= 10 ? 'fair' : 'poor';
+        html += `<div class="quality-row">
+          <span class="quality-dot ${quality}"></span>
+          <span class="quality-name">${c.name}</span>
+          <span class="quality-info">${c.count} obs (${c.spanDays}d span)</span>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
+    // Seasonal note
+    if (report.seasonalNote) {
+      html += `<div class="analytics-note">⚠️ ${report.seasonalNote}</div>`;
+    }
+
+    el.innerHTML = html;
   }
 
   // ── Update home page wheat price card from data ──────────
@@ -936,7 +1099,9 @@ window.onload = function() {
   // ── Initialize price UI on load ───────────────────────────
   if (PRICE_DATA) {
     renderPrices();
-    updateDatasetInfo();
+    renderAnalyticsOverview();
+    renderRankings();
+    renderDataQuality();
     updateHomeWheatCard();
   } else {
     showPriceError();
