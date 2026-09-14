@@ -101,13 +101,17 @@ window.onload = function() {
       interpretation: meta ? meta.interpretation : null
     };
 
-    // Data quality flags
+    // Data quality flags — based on actual forecasting metadata
     ctx.dataQuality = {
+      // Historical observations available for analytics
       sufficient: history.length >= 10,
       minimal: history.length >= 5 && history.length < 10,
       insufficient: history.length < 5,
       hasForecast: forecast != null,
-      forecastReliable: meta && meta.model_type === 'ml' && meta.skill_score > 0
+      forecastReliable: meta && meta.model_type === 'ml' && meta.skill_score > 0,
+      // Forecast type classification from actual model selection
+      forecastType: meta ? meta.model_type : 'none',
+      forecastModelName: meta ? meta.model_name : null
     };
 
     return ctx;
@@ -115,7 +119,7 @@ window.onload = function() {
 
   // Detect which crops are mentioned in a user message
   function detectCropMentions(message) {
-    if (!PRICE_DATA) return [];
+    if (!PRICE_DATA || !message) return [];
     var lower = message.toLowerCase();
     var found = [];
     var keys = Object.keys(PRICE_DATA);
@@ -204,16 +208,22 @@ window.onload = function() {
       var f = cropCtx.forecast;
       lines.push('');
       if (f.available) {
-        lines.push('FORECAST (ML model prediction):');
+        var forecastLabel = f.modelType === 'ml'
+          ? 'FORECAST (ML model prediction):'
+          : 'FORECAST (baseline estimate — limited predictive power):';
+        lines.push(forecastLabel);
         lines.push('  30-day Forecast: Rs.' + f.value);
         lines.push('  Model: ' + f.modelName + ' (' + f.modelType + ')');
-        if (f.skillScore != null) lines.push('  Skill Score: ' + (f.skillScore * 100).toFixed(1) + '% (vs naive baseline)');
+        // Skill Score only meaningful for ML models (baselines always score 0)
+        if (f.modelType === 'ml' && f.skillScore != null) {
+          lines.push('  Skill Score: ' + (f.skillScore * 100).toFixed(1) + '% (vs naive baseline)');
+        }
         if (f.directionAccuracy != null) lines.push('  Direction Accuracy: ' + f.directionAccuracy + '%');
         if (f.validationMAE != null) lines.push('  Validation MAE: Rs.' + f.validationMAE);
         lines.push('  Confidence: ' + f.confidence);
         lines.push('  Training Data: ' + f.trainingObs + ' observations');
       } else {
-        lines.push('FORECAST: Not available (insufficient historical data)');
+        lines.push('FORECAST: Not available (insufficient data for this crop)');
       }
     }
 
@@ -222,11 +232,19 @@ window.onload = function() {
       lines.push('');
       lines.push('DATA QUALITY:');
       if (dq.insufficient) {
-        lines.push('  WARNING: Insufficient data for reliable analysis');
+        lines.push('  WARNING: Insufficient historical data for reliable analysis');
       } else if (dq.minimal) {
-        lines.push('  NOTE: Limited data — interpret with caution');
+        lines.push('  NOTE: Limited historical data — interpret with caution');
       } else {
-        lines.push('  Status: Adequate (' + cropCtx.historyLength + ' observations)');
+        lines.push('  Historical Data: Adequate (' + cropCtx.historyLength + ' observations)');
+      }
+      // Show actual forecast type from model selection
+      if (dq.forecastType === 'insufficient_data') {
+        lines.push('  Forecast Status: Insufficient data — no forecast generated');
+      } else if (dq.forecastType === 'baseline') {
+        lines.push('  Forecast Status: Baseline model only (ML models did not outperform naive baseline)');
+      } else if (dq.forecastType === 'ml') {
+        lines.push('  Forecast Status: ML model selected' + (dq.forecastReliable ? ' (validated, positive skill score)' : ' (limited validation)'));
       }
     }
 
@@ -1354,6 +1372,9 @@ RULES:
 - NEVER fabricate crop prices, forecast values, or trend directions. If KisanSarthi data is not provided for a crop, say "I don't have specific market data for that crop in our system."
 - Distinguish clearly between: (a) historical data facts, (b) analytical results (trends, volatility), (c) model forecasts (predictions with uncertainty), and (d) general agricultural knowledge.
 - Forecasts are PREDICTIONS, not guarantees. Use language like "the model forecasts approximately..." not "the price will..."
+- If the data says "ML model selected" with a positive skill score, you may say the forecast is data-driven with some validation.
+- If the data says "Baseline model only", explain that the forecast is a simple statistical estimate, not a trained ML prediction.
+- If the data says "Insufficient data", say so honestly — no forecast is available.
 - If a crop has insufficient data, say so honestly. Do not present a weak forecast as reliable.
 - Do NOT present skill scores or technical ML metrics to farmers unless they specifically ask for technical details.
 - Be practical, specific, and actionable. Give actual quantities, timings, prices.
