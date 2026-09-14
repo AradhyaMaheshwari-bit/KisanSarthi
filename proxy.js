@@ -94,7 +94,6 @@ const server = http.createServer((req, res) => {
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
       const apiKey = req.headers['x-api-key'];
-      console.log('  API key received:', apiKey ? apiKey.substring(0, 12) + '...' : 'NONE');
 
       if (!apiKey || !apiKey.startsWith('sk-ant')) {
         console.log('  REJECTED: missing or invalid key');
