@@ -1512,6 +1512,11 @@ RULES:
     document.getElementById('nf-plan').style.display = 'block';
     document.getElementById('nf-loading').style.display = 'flex';
     document.getElementById('nf-output').style.display = 'none';
+    // Hide previous profitability results when generating new plan
+    document.getElementById('nf-profit').style.display = 'none';
+    document.getElementById('nf-profit').innerHTML = '';
+    const profBtnWrap2 = document.getElementById('nf-profit-btn-wrap');
+    if (profBtnWrap2) profBtnWrap2.style.display = 'none';
     const acres = +document.getElementById('nf-acres').value;
     setTimeout(() => {
       document.getElementById('nf-loading').style.display = 'none';
