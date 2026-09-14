@@ -4,14 +4,27 @@ from sklearn.linear_model import LinearRegression
 import json
 import argparse
 import os
+import sys
 from datetime import datetime
 
-# ── Usage ──────────────────────────────────────────────────────────────
+# Fix Windows console encoding for Unicode output
+if sys.platform == 'win32':
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+
+# -- Usage -----------------------------------------------------------------
 # Default: place dataset.csv in same folder as this script and run:
 #   python script.py
 # Or specify a custom path:
 #   python script.py --csv path/to/dataset.csv --out price_data.json
-# ───────────────────────────────────────────────────────────────────────
+#
+# Expected CSV columns:
+#   - Commodity:      Crop name (e.g. "Rice", "Wheat", "Onion")
+#   - Arrival_Date:   Date of market arrival (DD-MM-YYYY or similar)
+#   - Modal_Price:    Modal price in INR per quintal
+# -------------------------------------------------------------------------
+
+EXPECTED_COLUMNS = ['Commodity', 'Arrival_Date', 'Modal_Price']
 
 parser = argparse.ArgumentParser(description='Generate price_data.json from APMC dataset')
 parser.add_argument('--csv', default=os.path.join(os.path.dirname(__file__), 'dataset.csv'),
@@ -20,13 +33,36 @@ parser.add_argument('--out', default=os.path.join(os.path.dirname(__file__), 'pr
                     help='Output path for price_data.json (default: same folder as script)')
 args = parser.parse_args()
 
-print(f"📂 Loading dataset from: {args.csv}")
+if not os.path.exists(args.csv):
+    print(f"ERROR: Dataset not found: {args.csv}")
+    print()
+    print("The dataset.csv file is required to run the data pipeline.")
+    print("Expected CSV columns:")
+    for col in EXPECTED_COLUMNS:
+        print(f"  - {col}")
+    print()
+    print("Place your APMC market dataset CSV in the project root,")
+    print("or specify a path with: python script.py --csv path/to/dataset.csv")
+    print()
+    print("The existing price_data.json will continue to work with the frontend.")
+    exit(1)
+
+print(f"Loading dataset from: {args.csv}")
 df = pd.read_csv(args.csv)
+
+missing = [col for col in EXPECTED_COLUMNS if col not in df.columns]
+if missing:
+    print(f"ERROR: Missing required columns: {', '.join(missing)}")
+    print(f"  Found columns: {', '.join(df.columns)}")
+    print(f"  Expected columns: {', '.join(EXPECTED_COLUMNS)}")
+    exit(1)
+
+print(f"  Loaded {len(df)} rows, {df['Commodity'].nunique()} crops")
 df['Arrival_Date'] = pd.to_datetime(df['Arrival_Date'], dayfirst=True)
 df = df.dropna(subset=['Modal_Price'])
 df = df.drop_duplicates()
 
-# Remove outliers
+# Remove outliers using IQR method
 Q1 = df['Modal_Price'].quantile(0.25)
 Q3 = df['Modal_Price'].quantile(0.75)
 IQR = Q3 - Q1
@@ -37,7 +73,7 @@ price_data = {}
 
 for crop in crops:
     crop_df = df[df['Commodity'] == crop].groupby('Arrival_Date')['Modal_Price'].mean()
-    
+
     if len(crop_df) < 2:
         continue
 
@@ -68,4 +104,4 @@ for crop in crops:
 with open(args.out, 'w', encoding='utf-8') as f:
     json.dump(price_data, f, indent=2, ensure_ascii=False)
 
-print(f"✅ Exported {len(price_data)} crops to: {args.out}")
+print(f"Exported {len(price_data)} crops to: {args.out}")
