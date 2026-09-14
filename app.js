@@ -829,25 +829,30 @@ window.onload = function() {
     if (!PRICE_DATA || !PRICE_DATA[cropKey]) return;
     const crop = PRICE_DATA[cropKey];
     const r = document.getElementById('pred-result');
+    const metaDiv = document.getElementById('forecast-meta');
     if (!r) return;
 
     r.style.display = 'block';
     const forecast = getValidForecast(crop);
+    const meta = crop.forecast_meta || null;
 
     if (forecast == null) {
       r.innerHTML = `<div class="slide-in">
         <div class="tip g" style="font-size:13px;color:var(--text2)">
-          Forecast unavailable for ${formatCropName(cropKey)}.
-          ${crop.forecast_30d != null && crop.forecast_30d < 0
-            ? '<br><em style="font-size:11px">Note: pipeline generated an invalid forecast value. This will be corrected in a future data pipeline update.</em>'
-            : ''}
+          ${meta && meta.interpretation
+            ? meta.interpretation
+            : `Forecast unavailable for ${formatCropName(cropKey)}. Insufficient historical data.`}
         </div>
       </div>`;
+      if (metaDiv) { metaDiv.style.display = 'none'; metaDiv.innerHTML = ''; }
       return;
     }
 
     const change = crop.change_30d_pct || 0;
     const trend = change > 0 ? 'rising' : change < 0 ? 'falling' : 'stable';
+    const forecastChange = ((forecast - crop.current_price) / crop.current_price * 100);
+    const fTrend = forecastChange > 0.5 ? 'rise' : (forecastChange < -0.5 ? 'fall' : 'stay stable');
+
     r.innerHTML = `<div class="slide-in">
       <div class="pred-grid">
         <div class="pred-cell" style="background:var(--card2);border:1px solid var(--border)">
@@ -859,8 +864,43 @@ window.onload = function() {
           <div style="font-size:22px;font-weight:600;color:var(--green);margin-top:4px;letter-spacing:-.5px">₹${forecast.toLocaleString()}/q</div>
         </div>
       </div>
-      <div class="tip g">📊 <strong>${formatCropName(cropKey)}:</strong> price trend is currently <strong>${trend}</strong> (${change > 0 ? '+' : ''}${change.toFixed(1)}% over 30 days). 30-day forecast: ₹${forecast.toLocaleString()}/quintal.</div>
+      <div class="tip g">📊 <strong>${formatCropName(cropKey)}:</strong> price is currently <strong>${trend}</strong> (${change > 0 ? '+' : ''}${change.toFixed(1)}% over 30 days). Forecast suggests prices may <strong>${fTrend}</strong> to ₹${forecast.toLocaleString()}/quintal.</div>
     </div>`;
+
+    // ── Forecast metadata display ──
+    if (metaDiv && meta) {
+      const confColor = meta.confidence === 'high' ? 'var(--green)' :
+                         meta.confidence === 'medium' ? 'var(--amber)' : 'var(--text2)';
+      const confLabel = (meta.confidence || 'low').toUpperCase();
+      const modelType = meta.model_type === 'ml' ? '🤖 ML Model' :
+                        meta.model_type === 'baseline' ? '📏 Baseline' : '⚠️ Limited';
+      const skillPct = meta.skill_score != null ? (meta.skill_score * 100).toFixed(1) : '—';
+      const skillColor = meta.skill_score > 0.1 ? 'var(--green)' :
+                          meta.skill_score > 0 ? 'var(--amber)' : 'var(--text2)';
+      const dirAcc = meta.direction_accuracy != null ? meta.direction_accuracy.toFixed(0) + '%' : '—';
+
+      metaDiv.style.display = 'block';
+      metaDiv.innerHTML = `
+        <div class="forecast-meta">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px">
+            <span class="forecast-model-tag">${meta.model_name || 'Unknown'}</span>
+            <span style="font-size:11px;color:var(--text2)">${modelType}</span>
+            <span class="forecast-confidence" style="color:${confColor}">
+              ● ${confLabel} confidence
+            </span>
+          </div>
+          ${meta.interpretation ? `<div class="forecast-interpretation">${meta.interpretation}</div>` : ''}
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:6px;font-size:11px;color:var(--text2)">
+            <span>Skill: <strong style="color:${skillColor}">${skillPct}%</strong></span>
+            <span>Direction: <strong>${dirAcc}</strong></span>
+            <span>Training: <strong>${meta.training_observations || 0}</strong> obs</span>
+            ${meta.validation_mae != null ? `<span>MAE: <strong>₹${meta.validation_mae}</strong></span>` : ''}
+          </div>
+        </div>`;
+    } else if (metaDiv) {
+      metaDiv.style.display = 'none';
+      metaDiv.innerHTML = '';
+    }
   }
 
   // ── Dynamic market insights (analytics-powered) ──────────
