@@ -77,6 +77,11 @@ ML Forecasting Engine (forecasting.py)
 Export to price_data.json (28 crops, forecasts + model metadata)
         ↓
 Frontend renders live charts, forecasts, and insights
+        ↓
+AI Market Intelligence (app.js)
+  - Detects crop mentions in user chat messages
+  - Injects real prices, analytics, and forecasts into AI context
+  - AI responds with data-grounded, farmer-friendly answers
 ```
 
 ## 🚀 Setup & Running
@@ -151,12 +156,14 @@ All project dependencies are isolated to this repository:
 | Data Quality | Per-crop sufficiency indicators, sparse data detection |
 | Forecasting | ML-driven 30-day forecast with chronological validation, automatic model selection, and farmer-friendly confidence indicators |
 | Market Context | Per-crop insights: price range, trend direction, volatility |
+| AI Market Intelligence | AI chatbot receives real crop data, analytics, and forecasts for grounded answers |
 | Disease Detection | Image-based plant disease identification via Claude Vision |
 
 ## 🗺 Roadmap
 
 - [x] Agricultural data analytics (statistics, trends, volatility, anomalies, rankings)
 - [x] Improved forecasting with ML models (Ridge, Linear Regression, Gradient Boosting) and chronological validation
+- [x] AI market intelligence integration — chatbot grounded in real crop data, analytics, and ML forecasts
 - [ ] Real-time price updates via live APMC data feeds
 - [ ] Weather integration for location-specific farming advice
 - [ ] Government scheme eligibility checker
