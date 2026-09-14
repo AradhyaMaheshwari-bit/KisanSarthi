@@ -185,7 +185,7 @@ window.onload = function() {
     if (!cropCtx) return '';
     var lines = [];
     lines.push('CROP: ' + cropCtx.name);
-    lines.push('Current Price: Rs.' + cropCtx.currentPrice + '/' + cropCtx.unit);
+    lines.push('Latest Available Price: Rs.' + cropCtx.currentPrice + '/' + cropCtx.unit + ' (not real-time — from APMC dataset)');
     lines.push('30-day Change: ' + (cropCtx.change30dPct > 0 ? '+' : '') + cropCtx.change30dPct + '%');
     lines.push('7-day Average: Rs.' + cropCtx.avg7d);
     lines.push('Data Points: ' + cropCtx.historyLength + ' (' + cropCtx.dataRange + ')');
@@ -410,7 +410,7 @@ window.onload = function() {
       qSchemes:'🏛 Govt Schemes',qMandiLocator:'📍 Mandi Locator',
       // Prices page
       allCrops:'All crops',grains:'Grains',pulses:'Pulses',vegetables:'Vegetables',oilseeds:'Oilseeds',cashCrops:'Cash crops',
-      livePricesTitle:'Live Mandi Prices — April 2026',priceTrendTitle:'Price Trend Forecast',aiPredTitle:'AI Price Predictor',
+      livePricesTitle:'Mandi Prices — APMC Data',priceTrendTitle:'Price Trend Forecast',aiPredTitle:'AI Price Predictor',
       pickCropForecast:'Pick a crop to forecast:',
       // Weather page
       weatherTitle:'Greater Noida, UP',weatherUpdated:'Updated just now',
@@ -531,7 +531,7 @@ window.onload = function() {
       qSchemes:'🏛 सरकारी योजनाएं',qMandiLocator:'📍 मंडी खोजें',
       // Prices page
       allCrops:'सभी फसलें',grains:'अनाज',pulses:'दालें',vegetables:'सब्जियां',oilseeds:'तिलहन',cashCrops:'नकद फसलें',
-      livePricesTitle:'लाइव मंडी भाव — अप्रैल 2026',priceTrendTitle:'भाव पूर्वानुमान',aiPredTitle:'AI भाव पूर्वानुमान',
+      livePricesTitle:'मंडी भाव — APMC डेटा',priceTrendTitle:'भाव पूर्वानुमान',aiPredTitle:'AI भाव पूर्वानुमान',
       pickCropForecast:'पूर्वानुमान के लिए फसल चुनें:',
       // Weather page
       weatherTitle:'ग्रेटर नोएडा, UP',weatherUpdated:'अभी अपडेट किया',

@@ -1,6 +1,6 @@
 # 🌾 KisanSarthi
 
-> AI-powered agricultural intelligence platform for Indian farmers — real-time crop prices, ML forecasting, plant disease detection, and personalized farming advice.
+> AI-powered agricultural intelligence platform for Indian farmers — APMC market data, ML forecasting, plant disease detection, and personalized farming advice.
 
 ## 👥 Team
 
@@ -11,11 +11,11 @@
 
 ## 📌 About
 
-KisanSarthi is an AI-driven web application built for Indian farmers. It combines real-time APMC market data, machine learning price forecasts, AI-powered plant disease detection, and a conversational farming assistant — all in a single, mobile-friendly interface with bilingual support (English/Hindi).
+KisanSarthi is an AI-driven web application built for Indian farmers. It combines APMC market data, machine learning price forecasts, AI-powered plant disease detection, and a conversational farming assistant — all in a single, mobile-friendly interface with bilingual support (English/Hindi).
 
 ## 🎯 Key Features
 
-- **Live Mandi Prices** — Real-time crop prices for 28+ crops sourced from APMC market data, with interactive trend charts and 7-day moving averages
+- **Mandi Prices** — Crop prices for 28+ crops sourced from APMC market datasets, with interactive trend charts and 7-day moving averages
 - **30-Day Price Forecast** — ML-powered forecasting with multiple model candidates, chronological validation, and farmer-friendly confidence indicators
 - **Plant Disease Detection** — Upload a photo of a diseased plant; Claude Vision API identifies the disease and recommends treatment
 - **AI Farming Assistant** — Conversational chatbot (Claude AI) answers questions about crops, soil, weather, pests, and government schemes
@@ -76,7 +76,7 @@ ML Forecasting Engine (forecasting.py)
         ↓
 Export to price_data.json (28 crops, forecasts + model metadata)
         ↓
-Frontend renders live charts, forecasts, and insights
+Frontend renders charts, forecasts, and insights
         ↓
 AI Market Intelligence (app.js)
   - Detects crop mentions in user chat messages

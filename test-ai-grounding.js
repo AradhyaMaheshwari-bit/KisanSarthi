@@ -280,6 +280,37 @@ section('Suite 4: Anti-Hallucination Rules');
 }
 
 /* ══════════════════════════════════════════════════════
+   SUITE 5 — AUDIT: DATA HONESTY & NO DUPLICATION (6 assertions)
+   ══════════════════════════════════════════════════════ */
+section('Suite 5: Audit — Data Honesty & No Duplication');
+{
+  // 21. Market context says "Latest Available" not "Current Price"
+  const appSrc = fs.readFileSync(path.join(__dirname, 'app.js'), 'utf8');
+  assert(appSrc.indexOf('Latest Available Price') !== -1,
+    'formatContextForAI uses "Latest Available Price" label');
+  assert(appSrc.indexOf('not real-time') !== -1,
+    'market context includes "not real-time" disclaimer');
+
+  // 22. No duplicate ranking logic defined in app.js (calls to analytics module are fine)
+  assert(!/function\s+(sortCrop|rankCrop)\s*\(/.test(appSrc),
+    'no duplicate crop ranking function definition in app.js');
+
+  // 23. No duplicate economics calculation in app.js
+  assert(!/function\s+(calcEconomics|computeROI)\s*\(/.test(appSrc),
+    'no duplicate economics calculation in app.js');
+
+  // 24. No duplicate market risk calculation in app.js
+  assert(!/function\s+(calcVolatility|computeRisk)\s*\(/.test(appSrc),
+    'no duplicate market risk calculation in app.js');
+
+  // 25. LastCropRecommendation not in localStorage
+  assert(appSrc.indexOf("localStorage.setItem('lastCropRecommendation") === -1,
+    'lastCropRecommendation never persisted to localStorage');
+  assert(appSrc.indexOf("localStorage.setItem('last_crop") === -1,
+    'no crop recommendation data in localStorage');
+}
+
+/* ══════════════════════════════════════════════════════
    SUMMARY
    ══════════════════════════════════════════════════════ */
 console.log('\n═══════════════════════════════════════════');
