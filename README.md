@@ -20,7 +20,7 @@ plant disease detection, and farming advice — all in one place.
 | style.css | Styling and responsive design |
 | app.js | Frontend logic and Claude AI API integration |
 | proxy.js | Node.js proxy server for API calls |
-| script_py.py | Python data pipeline (cleaning + forecasting) |
+| script.py | Python data pipeline (cleaning + forecasting) |
 | price_data.json | Processed crop price dataset (output of script) |
 
 ## 🔬 Data Analysis (by Rahul)
