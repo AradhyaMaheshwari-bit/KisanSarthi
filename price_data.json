@@ -4,7 +4,7 @@
     "unit": "per quintal",
     "change_30d_pct": 5.6,
     "avg_7d": 1571,
-    "forecast_30d": 1638,
+    "forecast_30d": null,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -247,14 +247,30 @@
         "date": "2025-05-28",
         "price": 1900
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Insufficient Data",
+      "model_type": "insufficient_data",
+      "validation_mae": null,
+      "validation_mape": null,
+      "validation_rmse": null,
+      "direction_accuracy": null,
+      "skill_score": null,
+      "training_observations": 6,
+      "test_observations": 0,
+      "data_block_start": null,
+      "data_block_end": null,
+      "data_block_days": 0,
+      "interpretation": "Limited historical data available for Potato (6 data points). No reliable forecast can be generated. Please check back when more market data is available.",
+      "confidence": "low"
+    }
   },
   "cabbage": {
     "current_price": 1300,
     "unit": "per quintal",
     "change_30d_pct": 18.2,
     "avg_7d": 1000,
-    "forecast_30d": 679,
+    "forecast_30d": 900.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -453,14 +469,30 @@
         "date": "2023-03-24",
         "price": 1300
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 40.0,
+      "validation_mape": 3.76,
+      "validation_rmse": 89.44,
+      "direction_accuracy": 88.9,
+      "skill_score": -0.0,
+      "training_observations": 23,
+      "test_observations": 10,
+      "data_block_start": "2022-12-19",
+      "data_block_end": "2023-02-09",
+      "data_block_days": 52,
+      "interpretation": "Cabbage is currently trading at Rs.900. Our Naive Baseline predicts prices may remain stable around to Rs.900 over the next 30 days (+0.0%). Based on 23 recent data points with 89% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "pumpkin": {
     "current_price": 1900,
     "unit": "per quintal",
     "change_30d_pct": 18.8,
     "avg_7d": 1614,
-    "forecast_30d": -312,
+    "forecast_30d": 1700.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -535,14 +567,30 @@
         "date": "2023-03-31",
         "price": 1900
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 0,
+      "validation_mape": 0,
+      "validation_rmse": 0,
+      "direction_accuracy": 50,
+      "skill_score": 0,
+      "training_observations": 7,
+      "test_observations": 0,
+      "data_block_start": "2022-09-07",
+      "data_block_end": "2022-09-26",
+      "data_block_days": 19,
+      "interpretation": "Pumpkin is currently trading at Rs.1,700. Our Naive Baseline predicts prices may remain stable around to Rs.1,700 over the next 30 days (+0.0%). Based on 7 recent data points with 50% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "bhindi(ladies_finger)": {
     "current_price": 1800,
     "unit": "per quintal",
     "change_30d_pct": 12.5,
     "avg_7d": 1671,
-    "forecast_30d": 1206,
+    "forecast_30d": 1234.84,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -729,14 +777,30 @@
         "date": "2022-11-08",
         "price": 1800
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Ridge Regression",
+      "model_type": "ml",
+      "validation_mae": 41.12,
+      "validation_mape": 2.43,
+      "validation_rmse": 54.86,
+      "direction_accuracy": 58.3,
+      "skill_score": 0.406,
+      "training_observations": 30,
+      "test_observations": 13,
+      "data_block_start": "2022-09-06",
+      "data_block_end": "2022-11-08",
+      "data_block_days": 63,
+      "interpretation": "Bhindi(Ladies Finger) is currently trading at Rs.1,800. Our Ridge Regression predicts prices may fall to Rs.1,235 over the next 30 days (-31.4%). Based on 30 recent data points with 58% direction accuracy, this forecast has MEDIUM confidence. This forecast shows good predictive skill compared to a simple baseline.",
+      "confidence": "medium"
+    }
   },
   "onion": {
     "current_price": 3100,
     "unit": "per quintal",
     "change_30d_pct": 6.9,
     "avg_7d": 2814,
-    "forecast_30d": 2330,
+    "forecast_30d": null,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -979,14 +1043,30 @@
         "date": "2025-04-12",
         "price": 3100
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Insufficient Data",
+      "model_type": "insufficient_data",
+      "validation_mae": null,
+      "validation_mape": null,
+      "validation_rmse": null,
+      "direction_accuracy": null,
+      "skill_score": null,
+      "training_observations": 6,
+      "test_observations": 0,
+      "data_block_start": null,
+      "data_block_end": null,
+      "data_block_days": 0,
+      "interpretation": "Limited historical data available for Onion (6 data points). No reliable forecast can be generated. Please check back when more market data is available.",
+      "confidence": "low"
+    }
   },
   "brinjal": {
     "current_price": 1600,
     "unit": "per quintal",
     "change_30d_pct": -11.1,
     "avg_7d": 1457,
-    "forecast_30d": 884,
+    "forecast_30d": null,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -1229,14 +1309,30 @@
         "date": "2023-03-31",
         "price": 1600
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Insufficient Data",
+      "model_type": "insufficient_data",
+      "validation_mae": null,
+      "validation_mape": null,
+      "validation_rmse": null,
+      "direction_accuracy": null,
+      "skill_score": null,
+      "training_observations": 6,
+      "test_observations": 0,
+      "data_block_start": null,
+      "data_block_end": null,
+      "data_block_days": 0,
+      "interpretation": "Limited historical data available for Brinjal (6 data points). No reliable forecast can be generated. Please check back when more market data is available.",
+      "confidence": "low"
+    }
   },
   "cauliflower": {
     "current_price": 1600,
     "unit": "per quintal",
     "change_30d_pct": 23.1,
     "avg_7d": 1185,
-    "forecast_30d": 916,
+    "forecast_30d": 1358.82,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -1423,14 +1519,30 @@
         "date": "2023-03-31",
         "price": 1600
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Historical Mean",
+      "model_type": "baseline",
+      "validation_mae": 117.86,
+      "validation_mape": 9.76,
+      "validation_rmse": 135.61,
+      "direction_accuracy": 100.0,
+      "skill_score": 0.529,
+      "training_observations": 21,
+      "test_observations": 10,
+      "data_block_start": "2022-12-19",
+      "data_block_end": "2023-02-09",
+      "data_block_days": 52,
+      "interpretation": "Cauliflower is currently trading at Rs.1,100. Our Historical Mean predicts prices may rise to Rs.1,359 over the next 30 days (+23.5%). Based on 21 recent data points with 100% direction accuracy, this forecast has MEDIUM confidence. This forecast shows good predictive skill compared to a simple baseline.",
+      "confidence": "medium"
+    }
   },
   "mango": {
     "current_price": 3443,
     "unit": "per quintal",
     "change_30d_pct": 6.2,
     "avg_7d": 3333,
-    "forecast_30d": 4530,
+    "forecast_30d": 4019.91,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -1673,14 +1785,30 @@
         "date": "2015-08-26",
         "price": 3443
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Ridge Regression",
+      "model_type": "ml",
+      "validation_mae": 46.83,
+      "validation_mape": 1.43,
+      "validation_rmse": 57.8,
+      "direction_accuracy": 76.5,
+      "skill_score": 0.774,
+      "training_observations": 39,
+      "test_observations": 18,
+      "data_block_start": "2015-06-16",
+      "data_block_end": "2015-08-26",
+      "data_block_days": 71,
+      "interpretation": "Mango is currently trading at Rs.3,443. Our Ridge Regression predicts prices may rise to Rs.4,020 over the next 30 days (+16.8%). Based on 39 recent data points with 76% direction accuracy, this forecast has HIGH confidence. This forecast shows good predictive skill compared to a simple baseline.",
+      "confidence": "high"
+    }
   },
   "paddy(dhan)(common)": {
     "current_price": 2010,
     "unit": "per quintal",
     "change_30d_pct": 26.7,
     "avg_7d": 2028,
-    "forecast_30d": 2718,
+    "forecast_30d": 2010.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -1747,14 +1875,30 @@
         "date": "2022-11-22",
         "price": 2010
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 10.0,
+      "validation_mape": 0.49,
+      "validation_rmse": 12.25,
+      "direction_accuracy": 66.7,
+      "skill_score": -0.0,
+      "training_observations": 7,
+      "test_observations": 4,
+      "data_block_start": "2022-11-08",
+      "data_block_end": "2022-11-22",
+      "data_block_days": 14,
+      "interpretation": "Paddy(Dhan)(Common) is currently trading at Rs.2,010. Our Naive Baseline predicts prices may remain stable around to Rs.2,010 over the next 30 days (+0.0%). Based on 7 recent data points with 67% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "arhar_(tur/red_gram)(whole)": {
     "current_price": 3000,
     "unit": "per quintal",
     "change_30d_pct": 7.1,
     "avg_7d": 2957,
-    "forecast_30d": 2683,
+    "forecast_30d": 3043.52,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -1997,14 +2141,30 @@
         "date": "2004-08-03",
         "price": 3000
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Ridge Regression",
+      "model_type": "ml",
+      "validation_mae": 4.69,
+      "validation_mape": 0.16,
+      "validation_rmse": 5.28,
+      "direction_accuracy": 58.3,
+      "skill_score": 0.906,
+      "training_observations": 28,
+      "test_observations": 13,
+      "data_block_start": "2004-06-01",
+      "data_block_end": "2004-08-03",
+      "data_block_days": 63,
+      "interpretation": "Arhar (Tur/Red Gram)(Whole) is currently trading at Rs.3,000. Our Ridge Regression predicts prices may rise to Rs.3,044 over the next 30 days (+1.5%). Based on 28 recent data points with 58% direction accuracy, this forecast has MEDIUM confidence. This forecast shows good predictive skill compared to a simple baseline.",
+      "confidence": "medium"
+    }
   },
   "maize": {
     "current_price": 2400,
     "unit": "per quintal",
     "change_30d_pct": 20.6,
     "avg_7d": 2400,
-    "forecast_30d": 1242,
+    "forecast_30d": 2400.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -2247,14 +2407,30 @@
         "date": "2023-01-30",
         "price": 2400
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 0,
+      "validation_mape": 0,
+      "validation_rmse": 0,
+      "direction_accuracy": 50,
+      "skill_score": 0,
+      "training_observations": 5,
+      "test_observations": 0,
+      "data_block_start": "2023-01-03",
+      "data_block_end": "2023-01-13",
+      "data_block_days": 10,
+      "interpretation": "Maize is currently trading at Rs.2,400. Our Naive Baseline predicts prices may remain stable around to Rs.2,400 over the next 30 days (+0.0%). Based on 5 recent data points with 50% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "turmeric": {
     "current_price": 2850,
     "unit": "per quintal",
     "change_30d_pct": 21.3,
     "avg_7d": 2807,
-    "forecast_30d": 2412,
+    "forecast_30d": null,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -2497,14 +2673,30 @@
         "date": "2004-11-22",
         "price": 2850
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Insufficient Data",
+      "model_type": "insufficient_data",
+      "validation_mae": null,
+      "validation_mape": null,
+      "validation_rmse": null,
+      "direction_accuracy": null,
+      "skill_score": null,
+      "training_observations": 5,
+      "test_observations": 0,
+      "data_block_start": null,
+      "data_block_end": null,
+      "data_block_days": 0,
+      "interpretation": "Limited historical data available for Turmeric (5 data points). No reliable forecast can be generated. Please check back when more market data is available.",
+      "confidence": "low"
+    }
   },
   "rice": {
     "current_price": 2900,
     "unit": "per quintal",
     "change_30d_pct": 141.7,
     "avg_7d": 3497,
-    "forecast_30d": 1455,
+    "forecast_30d": 2937.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -2747,14 +2939,30 @@
         "date": "2022-10-01",
         "price": 2900
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 0,
+      "validation_mape": 0,
+      "validation_rmse": 0,
+      "direction_accuracy": 50,
+      "skill_score": 0,
+      "training_observations": 5,
+      "test_observations": 0,
+      "data_block_start": "2015-06-13",
+      "data_block_end": "2015-06-25",
+      "data_block_days": 12,
+      "interpretation": "Rice is currently trading at Rs.2,937. Our Naive Baseline predicts prices may remain stable around to Rs.2,937 over the next 30 days (+0.0%). Based on 5 recent data points with 50% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "banana": {
     "current_price": 600,
     "unit": "per quintal",
     "change_30d_pct": 0.0,
     "avg_7d": 304,
-    "forecast_30d": 286,
+    "forecast_30d": 7.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -2997,14 +3205,30 @@
         "date": "2004-09-04",
         "price": 600
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 0.0,
+      "validation_mape": 0.0,
+      "validation_rmse": 0.0,
+      "direction_accuracy": 100.0,
+      "skill_score": 0.0,
+      "training_observations": 8,
+      "test_observations": 4,
+      "data_block_start": "2004-03-19",
+      "data_block_end": "2004-04-10",
+      "data_block_days": 22,
+      "interpretation": "Banana is currently trading at Rs.7. Our Naive Baseline predicts prices may remain stable around to Rs.7 over the next 30 days (+0.0%). Based on 8 recent data points with 100% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "orange": {
     "current_price": 4610,
     "unit": "per quintal",
     "change_30d_pct": 68.6,
     "avg_7d": 4647,
-    "forecast_30d": 8156,
+    "forecast_30d": 4610.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -3107,14 +3331,30 @@
         "date": "2003-06-18",
         "price": 4610
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 0,
+      "validation_mape": 0,
+      "validation_rmse": 0,
+      "direction_accuracy": 50,
+      "skill_score": 0,
+      "training_observations": 6,
+      "test_observations": 0,
+      "data_block_start": "2003-06-09",
+      "data_block_end": "2003-06-18",
+      "data_block_days": 9,
+      "interpretation": "Orange is currently trading at Rs.4,610. Our Naive Baseline predicts prices may remain stable around to Rs.4,610 over the next 30 days (+0.0%). Based on 6 recent data points with 50% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "ginger(dry)": {
     "current_price": 2150,
     "unit": "per quintal",
     "change_30d_pct": 30.3,
     "avg_7d": 1995,
-    "forecast_30d": 2144,
+    "forecast_30d": 2150.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -3357,14 +3597,30 @@
         "date": "2004-01-16",
         "price": 2150
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 0,
+      "validation_mape": 0,
+      "validation_rmse": 0,
+      "direction_accuracy": 50,
+      "skill_score": 0,
+      "training_observations": 5,
+      "test_observations": 0,
+      "data_block_start": "2004-01-08",
+      "data_block_end": "2004-01-16",
+      "data_block_days": 8,
+      "interpretation": "Ginger(Dry) is currently trading at Rs.2,150. Our Naive Baseline predicts prices may remain stable around to Rs.2,150 over the next 30 days (+0.0%). Based on 5 recent data points with 50% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "chili_red": {
     "current_price": 2500,
     "unit": "per quintal",
     "change_30d_pct": 4.2,
     "avg_7d": 2457,
-    "forecast_30d": 2873,
+    "forecast_30d": null,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -3607,14 +3863,30 @@
         "date": "2004-11-22",
         "price": 2500
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Insufficient Data",
+      "model_type": "insufficient_data",
+      "validation_mae": null,
+      "validation_mape": null,
+      "validation_rmse": null,
+      "direction_accuracy": null,
+      "skill_score": null,
+      "training_observations": 5,
+      "test_observations": 0,
+      "data_block_start": null,
+      "data_block_end": null,
+      "data_block_days": 0,
+      "interpretation": "Limited historical data available for Chili Red (5 data points). No reliable forecast can be generated. Please check back when more market data is available.",
+      "confidence": "low"
+    }
   },
   "masur_dal": {
     "current_price": 2350,
     "unit": "per quintal",
     "change_30d_pct": 6.8,
     "avg_7d": 2307,
-    "forecast_30d": 2258,
+    "forecast_30d": 2656.59,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -3857,14 +4129,30 @@
         "date": "2004-08-03",
         "price": 2350
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Ridge Regression",
+      "model_type": "ml",
+      "validation_mae": 15.43,
+      "validation_mape": 0.68,
+      "validation_rmse": 17.77,
+      "direction_accuracy": 46.2,
+      "skill_score": 0.804,
+      "training_observations": 30,
+      "test_observations": 14,
+      "data_block_start": "2004-06-01",
+      "data_block_end": "2004-08-03",
+      "data_block_days": 63,
+      "interpretation": "Masur Dal is currently trading at Rs.2,350. Our Ridge Regression predicts prices may rise to Rs.2,657 over the next 30 days (+13.0%). Based on 30 recent data points with 46% direction accuracy, this forecast has LOW confidence. This forecast shows good predictive skill compared to a simple baseline.",
+      "confidence": "low"
+    }
   },
   "garlic": {
     "current_price": 1450,
     "unit": "per quintal",
     "change_30d_pct": -7.9,
     "avg_7d": 1455,
-    "forecast_30d": 1312,
+    "forecast_30d": 1450.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -4035,14 +4323,30 @@
         "date": "2003-06-19",
         "price": 1450
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 5.0,
+      "validation_mape": 0.34,
+      "validation_rmse": 7.07,
+      "direction_accuracy": 80.0,
+      "skill_score": -0.0,
+      "training_observations": 12,
+      "test_observations": 6,
+      "data_block_start": "2003-05-23",
+      "data_block_end": "2003-06-19",
+      "data_block_days": 27,
+      "interpretation": "Garlic is currently trading at Rs.1,450. Our Naive Baseline predicts prices may remain stable around to Rs.1,450 over the next 30 days (+0.0%). Based on 12 recent data points with 80% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "green_gram_dal_(moong_dal)": {
     "current_price": 2050,
     "unit": "per quintal",
     "change_30d_pct": 2.5,
     "avg_7d": 2027,
-    "forecast_30d": 2093,
+    "forecast_30d": 2050.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -4129,14 +4433,30 @@
         "date": "2003-11-14",
         "price": 2050
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 0,
+      "validation_mape": 0,
+      "validation_rmse": 0,
+      "direction_accuracy": 50,
+      "skill_score": 0,
+      "training_observations": 5,
+      "test_observations": 0,
+      "data_block_start": "2003-11-06",
+      "data_block_end": "2003-11-14",
+      "data_block_days": 8,
+      "interpretation": "Green Gram Dal (Moong Dal) is currently trading at Rs.2,050. Our Naive Baseline predicts prices may remain stable around to Rs.2,050 over the next 30 days (+0.0%). Based on 5 recent data points with 50% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "grapes": {
     "current_price": 4700,
     "unit": "per quintal",
     "change_30d_pct": 43.0,
     "avg_7d": 4342,
-    "forecast_30d": 7610,
+    "forecast_30d": 5217.79,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -4203,14 +4523,30 @@
         "date": "2003-05-10",
         "price": 4700
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Linear Regression",
+      "model_type": "ml",
+      "validation_mae": 90.83,
+      "validation_mape": 2.1,
+      "validation_rmse": 127.96,
+      "direction_accuracy": 66.7,
+      "skill_score": 0.745,
+      "training_observations": 9,
+      "test_observations": 4,
+      "data_block_start": "2003-04-19",
+      "data_block_end": "2003-05-10",
+      "data_block_days": 21,
+      "interpretation": "Grapes is currently trading at Rs.4,700. Our Linear Regression predicts prices may rise to Rs.5,218 over the next 30 days (+11.0%). Based on 9 recent data points with 67% direction accuracy, this forecast has LOW confidence. This forecast shows good predictive skill compared to a simple baseline.",
+      "confidence": "low"
+    }
   },
   "wheat": {
     "current_price": 2480,
     "unit": "per quintal",
     "change_30d_pct": -4.6,
     "avg_7d": 2500,
-    "forecast_30d": 2920,
+    "forecast_30d": 2480.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -4453,14 +4789,30 @@
         "date": "2026-03-10",
         "price": 2480
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 0,
+      "validation_mape": 0,
+      "validation_rmse": 0,
+      "direction_accuracy": 50,
+      "skill_score": 0,
+      "training_observations": 9,
+      "test_observations": 0,
+      "data_block_start": "2026-02-20",
+      "data_block_end": "2026-03-10",
+      "data_block_days": 18,
+      "interpretation": "Wheat is currently trading at Rs.2,480. Our Naive Baseline predicts prices may remain stable around to Rs.2,480 over the next 30 days (+0.0%). Based on 9 recent data points with 50% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "apple": {
     "current_price": 4150,
     "unit": "per quintal",
     "change_30d_pct": 12.2,
     "avg_7d": 4144,
-    "forecast_30d": 5199,
+    "forecast_30d": 4150.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -4515,14 +4867,30 @@
         "date": "2003-05-06",
         "price": 4150
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 16.0,
+      "validation_mape": 0.39,
+      "validation_rmse": 17.26,
+      "direction_accuracy": 50.0,
+      "skill_score": 0.0,
+      "training_observations": 7,
+      "test_observations": 3,
+      "data_block_start": "2003-04-19",
+      "data_block_end": "2003-05-06",
+      "data_block_days": 17,
+      "interpretation": "Apple is currently trading at Rs.4,150. Our Naive Baseline predicts prices may remain stable around to Rs.4,150 over the next 30 days (+0.0%). Based on 7 recent data points with 50% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "bengal_gram(gram)(whole)": {
     "current_price": 1700,
     "unit": "per quintal",
     "change_30d_pct": -10.1,
     "avg_7d": 1700,
-    "forecast_30d": 1599,
+    "forecast_30d": 1700.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -4765,14 +5133,30 @@
         "date": "2004-02-26",
         "price": 1700
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 0.0,
+      "validation_mape": 0.0,
+      "validation_rmse": 0.0,
+      "direction_accuracy": 100.0,
+      "skill_score": 0.0,
+      "training_observations": 11,
+      "test_observations": 6,
+      "data_block_start": "2004-02-03",
+      "data_block_end": "2004-02-26",
+      "data_block_days": 23,
+      "interpretation": "Bengal Gram(Gram)(Whole) is currently trading at Rs.1,700. Our Naive Baseline predicts prices may remain stable around to Rs.1,700 over the next 30 days (+0.0%). Based on 11 recent data points with 100% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "mustard": {
     "current_price": 3980,
     "unit": "per quintal",
     "change_30d_pct": -1.2,
     "avg_7d": 3952,
-    "forecast_30d": 4298,
+    "forecast_30d": 3980.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -5015,14 +5399,30 @@
         "date": "2016-02-09",
         "price": 3980
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 0,
+      "validation_mape": 0,
+      "validation_rmse": 0,
+      "direction_accuracy": 50,
+      "skill_score": 0,
+      "training_observations": 5,
+      "test_observations": 0,
+      "data_block_start": "2016-02-01",
+      "data_block_end": "2016-02-09",
+      "data_block_days": 8,
+      "interpretation": "Mustard is currently trading at Rs.3,980. Our Naive Baseline predicts prices may remain stable around to Rs.3,980 over the next 30 days (+0.0%). Based on 5 recent data points with 50% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "red_gram": {
     "current_price": 2400,
     "unit": "per quintal",
     "change_30d_pct": 0.0,
     "avg_7d": 2400,
-    "forecast_30d": 2267,
+    "forecast_30d": 2400.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -5265,14 +5665,30 @@
         "date": "2006-08-29",
         "price": 2400
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 0.0,
+      "validation_mape": 0.0,
+      "validation_rmse": 0.0,
+      "direction_accuracy": 100.0,
+      "skill_score": 0.0,
+      "training_observations": 39,
+      "test_observations": 18,
+      "data_block_start": "2006-06-15",
+      "data_block_end": "2006-08-29",
+      "data_block_days": 75,
+      "interpretation": "Red Gram is currently trading at Rs.2,400. Our Naive Baseline predicts prices may remain stable around to Rs.2,400 over the next 30 days (+0.0%). Based on 39 recent data points with 100% direction accuracy, this forecast has LOW confidence.",
+      "confidence": "low"
+    }
   },
   "black_gram_(urd_beans)(whole)": {
     "current_price": 1825,
     "unit": "per quintal",
     "change_30d_pct": 4.3,
     "avg_7d": 1825,
-    "forecast_30d": 1589,
+    "forecast_30d": 1830.63,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -5515,14 +5931,30 @@
         "date": "2004-08-03",
         "price": 1825
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Ridge Regression",
+      "model_type": "ml",
+      "validation_mae": 33.71,
+      "validation_mape": 1.86,
+      "validation_rmse": 46.01,
+      "direction_accuracy": 64.3,
+      "skill_score": 0.438,
+      "training_observations": 32,
+      "test_observations": 15,
+      "data_block_start": "2004-06-01",
+      "data_block_end": "2004-08-03",
+      "data_block_days": 63,
+      "interpretation": "Black Gram (Urd Beans)(Whole) is currently trading at Rs.1,825. Our Ridge Regression predicts prices may remain stable around to Rs.1,831 over the next 30 days (+0.3%). Based on 32 recent data points with 64% direction accuracy, this forecast has HIGH confidence. This forecast shows good predictive skill compared to a simple baseline.",
+      "confidence": "high"
+    }
   },
   "litchi": {
     "current_price": 3733,
     "unit": "per quintal",
     "change_30d_pct": 2.8,
     "avg_7d": 3766,
-    "forecast_30d": 4299,
+    "forecast_30d": null,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -5545,6 +5977,22 @@
         "date": "2015-06-17",
         "price": 3733
       }
-    ]
+    ],
+    "forecast_meta": {
+      "model_name": "Insufficient Data",
+      "model_type": "insufficient_data",
+      "validation_mae": null,
+      "validation_mape": null,
+      "validation_rmse": null,
+      "direction_accuracy": null,
+      "skill_score": null,
+      "training_observations": 5,
+      "test_observations": 0,
+      "data_block_start": null,
+      "data_block_end": null,
+      "data_block_days": 0,
+      "interpretation": "Limited historical data available for Litchi (5 data points). No reliable forecast can be generated. Please check back when more market data is available.",
+      "confidence": "low"
+    }
   }
 }

@@ -1,11 +1,11 @@
 import pandas as pd
 import numpy as np
-from sklearn.linear_model import LinearRegression
 import json
 import argparse
 import os
 import sys
 from datetime import datetime
+from forecasting import run_forecasting_pipeline
 
 # Fix Windows console encoding for Unicode output
 if sys.platform == 'win32':
@@ -77,23 +77,27 @@ for crop in crops:
     if len(crop_df) < 2:
         continue
 
-    # Linear regression forecast
-    X = np.arange(len(crop_df)).reshape(-1, 1)
-    y = crop_df.values
-    model = LinearRegression().fit(X, y)
-    future_X = np.arange(len(crop_df), len(crop_df) + 30).reshape(-1, 1)
-    forecast = model.predict(future_X)
-
     current = crop_df.iloc[-1]
     price_30d_ago = crop_df.iloc[-30] if len(crop_df) >= 30 else crop_df.iloc[0]
     change_pct = round((current - price_30d_ago) / price_30d_ago * 100, 1)
 
-    price_data[crop.lower().replace(' ', '_')] = {
+    # Build history records for forecasting pipeline
+    history = [
+        {"date": str(date.date()), "price": float(price)}
+        for date, price in crop_df.tail(60).items()
+    ]
+
+    # ML forecasting pipeline
+    crop_key = crop.lower().replace(' ', '_')
+    forecast_result = run_forecasting_pipeline(history, crop_name=crop_key)
+
+    price_data[crop_key] = {
         "current_price": int(current),
         "unit": "per quintal",
         "change_30d_pct": change_pct,
         "avg_7d": int(crop_df.tail(7).mean()),
-        "forecast_30d": int(forecast[-1]),
+        "forecast_30d": forecast_result['forecast_30d'],
+        "forecast_meta": forecast_result['forecast_meta'],
         "last_updated": datetime.today().strftime('%Y-%m-%d'),
         "history": [
             {"date": str(date.date()), "price": int(price)}
