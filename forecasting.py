@@ -134,11 +134,15 @@ def build_features(prices, timestamps, start_dates=None):
         X[i, 1] = prices[i - 2] if i >= 2 else np.nan  # lag_2
         X[i, 2] = prices[i - 3] if i >= 3 else np.nan  # lag_3
 
-        # Rolling stats (last 5 observations)
+        # Rolling stats (last 5 observations EXCLUDING current — prevents target leakage)
         window_start = max(0, i - 4)
-        window = prices[window_start:i + 1]
-        X[i, 3] = np.mean(window)  # rolling_mean_5
-        X[i, 4] = np.std(window) if len(window) > 1 else 0.0  # rolling_std_5
+        past_window = prices[window_start:i]  # exclude prices[i] (the prediction target)
+        if len(past_window) > 0:
+            X[i, 3] = np.mean(past_window)  # rolling_mean_5
+            X[i, 4] = np.std(past_window) if len(past_window) > 1 else 0.0  # rolling_std_5
+        else:
+            X[i, 3] = prices[i]  # fallback: use current price as only available info
+            X[i, 4] = 0.0
 
         # Calendar gap (days since previous observation)
         if i >= 1:
@@ -617,18 +621,27 @@ def run_forecasting_pipeline(history, crop_name="unknown"):
         model_type = 'baseline'
         fitted_model = None
     elif best_name == 'linear_regression':
-        # Refit on complete data, then recursive forecast
-        fitted_model = best_cand['model']
+        # Refit on COMPLETE data (not just training split) for final forecast
+        from sklearn.linear_model import LinearRegression
+        fitted_model = LinearRegression()
+        fitted_model.fit(X_complete, log_prices)
         forecast_vals = _recursive_forecast(fitted_model, prices, timestamps, dates, n_steps)
         model_display = 'Linear Regression'
         model_type = 'ml'
     elif best_name == 'ridge':
-        fitted_model = best_cand['model']
+        from sklearn.linear_model import Ridge
+        fitted_model = Ridge(alpha=1.0)
+        fitted_model.fit(X_complete, log_prices)
         forecast_vals = _recursive_forecast(fitted_model, prices, timestamps, dates, n_steps)
         model_display = 'Ridge Regression'
         model_type = 'ml'
     elif best_name == 'hist_gradient_boosting':
-        fitted_model = best_cand['model']
+        from sklearn.ensemble import HistGradientBoostingRegressor
+        fitted_model = HistGradientBoostingRegressor(
+            max_iter=100, max_depth=3, learning_rate=0.1,
+            min_samples_leaf=5, random_state=42
+        )
+        fitted_model.fit(X_complete, log_prices)
         forecast_vals = _recursive_forecast(fitted_model, prices, timestamps, dates, n_steps)
         model_display = 'Gradient Boosting'
         model_type = 'ml'

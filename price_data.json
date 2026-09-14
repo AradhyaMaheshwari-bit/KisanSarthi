@@ -590,7 +590,7 @@
     "unit": "per quintal",
     "change_30d_pct": 12.5,
     "avg_7d": 1671,
-    "forecast_30d": 1234.84,
+    "forecast_30d": 1678.36,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -779,19 +779,19 @@
       }
     ],
     "forecast_meta": {
-      "model_name": "Ridge Regression",
+      "model_name": "Gradient Boosting",
       "model_type": "ml",
-      "validation_mae": 41.12,
-      "validation_mape": 2.43,
-      "validation_rmse": 54.86,
+      "validation_mae": 45.13,
+      "validation_mape": 2.68,
+      "validation_rmse": 61.01,
       "direction_accuracy": 58.3,
-      "skill_score": 0.406,
+      "skill_score": 0.348,
       "training_observations": 30,
       "test_observations": 13,
       "data_block_start": "2022-09-06",
       "data_block_end": "2022-11-08",
       "data_block_days": 63,
-      "interpretation": "Bhindi(Ladies Finger) is currently trading at Rs.1,800. Our Ridge Regression predicts prices may fall to Rs.1,235 over the next 30 days (-31.4%). Based on 30 recent data points with 58% direction accuracy, this forecast has MEDIUM confidence. This forecast shows good predictive skill compared to a simple baseline.",
+      "interpretation": "Bhindi(Ladies Finger) is currently trading at Rs.1,800. Our Gradient Boosting predicts prices may fall to Rs.1,678 over the next 30 days (-6.8%). Based on 30 recent data points with 58% direction accuracy, this forecast has MEDIUM confidence. This forecast shows good predictive skill compared to a simple baseline.",
       "confidence": "medium"
     }
   },
@@ -1542,7 +1542,7 @@
     "unit": "per quintal",
     "change_30d_pct": 6.2,
     "avg_7d": 3333,
-    "forecast_30d": 4019.91,
+    "forecast_30d": 3263.9,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -1787,20 +1787,20 @@
       }
     ],
     "forecast_meta": {
-      "model_name": "Ridge Regression",
-      "model_type": "ml",
-      "validation_mae": 46.83,
-      "validation_mape": 1.43,
-      "validation_rmse": 57.8,
-      "direction_accuracy": 76.5,
-      "skill_score": 0.774,
+      "model_name": "Moving Average",
+      "model_type": "baseline",
+      "validation_mae": 137.33,
+      "validation_mape": 4.13,
+      "validation_rmse": 149.59,
+      "direction_accuracy": 47.1,
+      "skill_score": 0.336,
       "training_observations": 39,
       "test_observations": 18,
       "data_block_start": "2015-06-16",
       "data_block_end": "2015-08-26",
       "data_block_days": 71,
-      "interpretation": "Mango is currently trading at Rs.3,443. Our Ridge Regression predicts prices may rise to Rs.4,020 over the next 30 days (+16.8%). Based on 39 recent data points with 76% direction accuracy, this forecast has HIGH confidence. This forecast shows good predictive skill compared to a simple baseline.",
-      "confidence": "high"
+      "interpretation": "Mango is currently trading at Rs.3,443. Our Moving Average predicts prices may fall to Rs.3,264 over the next 30 days (-5.2%). Based on 39 recent data points with 47% direction accuracy, this forecast has LOW confidence. This forecast shows good predictive skill compared to a simple baseline.",
+      "confidence": "low"
     }
   },
   "paddy(dhan)(common)": {
@@ -1898,7 +1898,7 @@
     "unit": "per quintal",
     "change_30d_pct": 7.1,
     "avg_7d": 2957,
-    "forecast_30d": 3043.52,
+    "forecast_30d": 3144.3,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -2145,18 +2145,18 @@
     "forecast_meta": {
       "model_name": "Ridge Regression",
       "model_type": "ml",
-      "validation_mae": 4.69,
-      "validation_mape": 0.16,
-      "validation_rmse": 5.28,
-      "direction_accuracy": 58.3,
-      "skill_score": 0.906,
+      "validation_mae": 13.55,
+      "validation_mape": 0.46,
+      "validation_rmse": 18.29,
+      "direction_accuracy": 33.3,
+      "skill_score": 0.729,
       "training_observations": 28,
       "test_observations": 13,
       "data_block_start": "2004-06-01",
       "data_block_end": "2004-08-03",
       "data_block_days": 63,
-      "interpretation": "Arhar (Tur/Red Gram)(Whole) is currently trading at Rs.3,000. Our Ridge Regression predicts prices may rise to Rs.3,044 over the next 30 days (+1.5%). Based on 28 recent data points with 58% direction accuracy, this forecast has MEDIUM confidence. This forecast shows good predictive skill compared to a simple baseline.",
-      "confidence": "medium"
+      "interpretation": "Arhar (Tur/Red Gram)(Whole) is currently trading at Rs.3,000. Our Ridge Regression predicts prices may rise to Rs.3,144 over the next 30 days (+4.8%). Based on 28 recent data points with 33% direction accuracy, this forecast has LOW confidence. This forecast shows good predictive skill compared to a simple baseline.",
+      "confidence": "low"
     }
   },
   "maize": {
@@ -3886,7 +3886,7 @@
     "unit": "per quintal",
     "change_30d_pct": 6.8,
     "avg_7d": 2307,
-    "forecast_30d": 2656.59,
+    "forecast_30d": 2537.02,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -4133,18 +4133,18 @@
     "forecast_meta": {
       "model_name": "Ridge Regression",
       "model_type": "ml",
-      "validation_mae": 15.43,
-      "validation_mape": 0.68,
-      "validation_rmse": 17.77,
-      "direction_accuracy": 46.2,
-      "skill_score": 0.804,
+      "validation_mae": 14.21,
+      "validation_mape": 0.62,
+      "validation_rmse": 19.52,
+      "direction_accuracy": 61.5,
+      "skill_score": 0.819,
       "training_observations": 30,
       "test_observations": 14,
       "data_block_start": "2004-06-01",
       "data_block_end": "2004-08-03",
       "data_block_days": 63,
-      "interpretation": "Masur Dal is currently trading at Rs.2,350. Our Ridge Regression predicts prices may rise to Rs.2,657 over the next 30 days (+13.0%). Based on 30 recent data points with 46% direction accuracy, this forecast has LOW confidence. This forecast shows good predictive skill compared to a simple baseline.",
-      "confidence": "low"
+      "interpretation": "Masur Dal is currently trading at Rs.2,350. Our Ridge Regression predicts prices may rise to Rs.2,537 over the next 30 days (+8.0%). Based on 30 recent data points with 62% direction accuracy, this forecast has HIGH confidence. This forecast shows good predictive skill compared to a simple baseline.",
+      "confidence": "high"
     }
   },
   "garlic": {
@@ -4456,7 +4456,7 @@
     "unit": "per quintal",
     "change_30d_pct": 43.0,
     "avg_7d": 4342,
-    "forecast_30d": 5217.79,
+    "forecast_30d": 4700.0,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -4525,19 +4525,19 @@
       }
     ],
     "forecast_meta": {
-      "model_name": "Linear Regression",
-      "model_type": "ml",
-      "validation_mae": 90.83,
-      "validation_mape": 2.1,
-      "validation_rmse": 127.96,
-      "direction_accuracy": 66.7,
-      "skill_score": 0.745,
+      "model_name": "Naive Baseline",
+      "model_type": "baseline",
+      "validation_mae": 355.5,
+      "validation_mape": 7.62,
+      "validation_rmse": 380.33,
+      "direction_accuracy": 33.3,
+      "skill_score": 0.0,
       "training_observations": 9,
       "test_observations": 4,
       "data_block_start": "2003-04-19",
       "data_block_end": "2003-05-10",
       "data_block_days": 21,
-      "interpretation": "Grapes is currently trading at Rs.4,700. Our Linear Regression predicts prices may rise to Rs.5,218 over the next 30 days (+11.0%). Based on 9 recent data points with 67% direction accuracy, this forecast has LOW confidence. This forecast shows good predictive skill compared to a simple baseline.",
+      "interpretation": "Grapes is currently trading at Rs.4,700. Our Naive Baseline predicts prices may remain stable around to Rs.4,700 over the next 30 days (+0.0%). Based on 9 recent data points with 33% direction accuracy, this forecast has LOW confidence.",
       "confidence": "low"
     }
   },
@@ -5688,7 +5688,7 @@
     "unit": "per quintal",
     "change_30d_pct": 4.3,
     "avg_7d": 1825,
-    "forecast_30d": 1830.63,
+    "forecast_30d": 1882.79,
     "last_updated": "2026-04-23",
     "history": [
       {
@@ -5935,18 +5935,18 @@
     "forecast_meta": {
       "model_name": "Ridge Regression",
       "model_type": "ml",
-      "validation_mae": 33.71,
-      "validation_mape": 1.86,
-      "validation_rmse": 46.01,
-      "direction_accuracy": 64.3,
-      "skill_score": 0.438,
+      "validation_mae": 45.57,
+      "validation_mape": 2.51,
+      "validation_rmse": 63.22,
+      "direction_accuracy": 28.6,
+      "skill_score": 0.24,
       "training_observations": 32,
       "test_observations": 15,
       "data_block_start": "2004-06-01",
       "data_block_end": "2004-08-03",
       "data_block_days": 63,
-      "interpretation": "Black Gram (Urd Beans)(Whole) is currently trading at Rs.1,825. Our Ridge Regression predicts prices may remain stable around to Rs.1,831 over the next 30 days (+0.3%). Based on 32 recent data points with 64% direction accuracy, this forecast has HIGH confidence. This forecast shows good predictive skill compared to a simple baseline.",
-      "confidence": "high"
+      "interpretation": "Black Gram (Urd Beans)(Whole) is currently trading at Rs.1,825. Our Ridge Regression predicts prices may rise to Rs.1,883 over the next 30 days (+3.2%). Based on 32 recent data points with 29% direction accuracy, this forecast has LOW confidence. This forecast shows good predictive skill compared to a simple baseline.",
+      "confidence": "low"
     }
   },
   "litchi": {
