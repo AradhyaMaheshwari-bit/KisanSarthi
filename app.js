@@ -915,10 +915,29 @@ window.onload = function() {
       Date range: <strong>${stats.dateRange.min}</strong> to <strong>${stats.dateRange.max}</strong>`;
   }
 
+  // ── Update home page wheat price card from data ──────────
+  function updateHomeWheatCard() {
+    if (!PRICE_DATA) return;
+    // Find wheat in dataset (key might be "wheat")
+    const wheat = PRICE_DATA['wheat'];
+    if (!wheat) return;
+    const priceEl = document.getElementById('home-wheat-price');
+    const chgEl = document.getElementById('home-wheat-chg');
+    if (priceEl) priceEl.textContent = '₹' + wheat.current_price.toLocaleString();
+    if (chgEl) {
+      const chg = wheat.change_30d_pct || 0;
+      const dir = chg > 0 ? 'up' : chg < 0 ? 'dn' : 'flat';
+      const arrow = dir === 'up' ? '↑' : dir === 'dn' ? '↓' : '→';
+      chgEl.textContent = `${arrow} ${Math.abs(chg).toFixed(1)}% (30d)`;
+      chgEl.className = 'chg ' + dir;
+    }
+  }
+
   // ── Initialize price UI on load ───────────────────────────
   if (PRICE_DATA) {
     renderPrices();
     updateDatasetInfo();
+    updateHomeWheatCard();
   } else {
     showPriceError();
   }
