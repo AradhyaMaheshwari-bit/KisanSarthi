@@ -91,11 +91,16 @@ Frontend renders live charts, forecasts, and insights
    ```bash
    npm install
    ```
+   Node.js dependencies are installed locally into `node_modules/`. This project currently uses only Node.js built-in modules, so no npm packages are required.
 
-3. **Install Python dependencies** (for data pipeline)
+3. **Set up Python environment** (for data pipeline)
    ```bash
+   python -m venv .venv
+   .venv\Scripts\activate        # Windows
+   # source .venv/bin/activate   # macOS/Linux
    pip install -r requirements.txt
    ```
+   All Python dependencies are installed into the project-local `.venv/` virtual environment. Never install project Python packages globally.
 
 4. **Run the application**
    ```bash
@@ -114,6 +119,17 @@ python script.py --csv path/to/dataset.csv
 ```
 
 If no `dataset.csv` is provided, the existing `price_data.json` continues to work with the frontend.
+
+### Development Environment
+
+All project dependencies are isolated to this repository:
+
+| Ecosystem | Mechanism | Location |
+|-----------|-----------|----------|
+| Python | Virtual environment | `.venv/` |
+| Node.js | Local `node_modules/` | `node_modules/` (currently empty — no npm deps needed) |
+
+**Rule:** When adding a dependency, use the native project-local mechanism for that ecosystem. Never install project dependencies globally.
 
 ## 📊 Analytics & Intelligence
 
