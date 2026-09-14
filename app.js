@@ -369,6 +369,12 @@ window.onload = function() {
 
   function bootApp() {
 
+  // ── Check for server-side AI gateway on boot ──────────────
+  fetch('/api/health').then(function(r){return r.json();}).then(function(d){
+    kisanHasGateway = !!d.gateway;
+    if(kisanHasGateway) console.log('KisanSarthi: server-side AI gateway detected');
+  }).catch(function(){ kisanHasGateway = false; });
+
   const T = {
     en:{
       home:'Home',advisor:'Advisor',prices:'Prices',weather:'Weather',chat:'AI Chat',newfarmer:'New Farmer',disease:'Scan Plant',schemes:'Schemes',mandi:'Mandi',
@@ -753,13 +759,14 @@ window.onload = function() {
      CLAUDE API HELPER
   ══════════════════════════════════════════════════════ */
   /* ── API key helpers ──────────────────────────────────*/
+  var kisanHasGateway = false; // set by /api/health check on boot
   function getApiKey(){
     return localStorage.getItem('kisanai_api_key')||'';
   }
   function saveApiKey(k){
     localStorage.setItem('kisanai_api_key', k.trim());
   }
-  function promptApiKey(onSuccess){
+  function promptApiKey(onSuccess, onCancel){
     const existing=getApiKey();
     if(existing){onSuccess(existing);return;}
     // Build modal
@@ -781,11 +788,11 @@ window.onload = function() {
     document.body.appendChild(overlay);
 
     // Dismiss on Escape key
-    function onKey(e){ if(e.key==='Escape'){overlay.remove();document.removeEventListener('keydown',onKey);} }
+    function onKey(e){ if(e.key==='Escape'){overlay.remove();document.removeEventListener('keydown',onKey);if(onCancel)onCancel();} }
     document.addEventListener('keydown',onKey);
 
     // Dismiss on backdrop click (click outside the card)
-    overlay.addEventListener('click',function(e){ if(e.target===overlay){overlay.remove();document.removeEventListener('keydown',onKey);} });
+    overlay.addEventListener('click',function(e){ if(e.target===overlay){overlay.remove();document.removeEventListener('keydown',onKey);if(onCancel)onCancel();} });
 
     document.getElementById('key-save').onclick=function(){
       const val=document.getElementById('key-inp').value.trim();
@@ -810,6 +817,28 @@ window.onload = function() {
   }
   
   async function callClaude(systemPrompt, userMessage, maxTokens=800){
+    // If server-side gateway is available, skip browser key prompt
+    if (kisanHasGateway) {
+      try{
+        const res = await fetch('/api',{
+          method:'POST',
+          headers: apiHeaders(),
+          body:JSON.stringify({
+            model:'claude-haiku-4-5',
+            max_tokens: maxTokens,
+            system: systemPrompt,
+            messages:[{role:'user',content:userMessage}]
+          })
+        });
+        if(!res.ok){
+          const err=await res.json().catch(()=>({}));
+          throw new Error(err.error?.message||'API error: '+res.status);
+        }
+        const data = await res.json();
+        return data.content.map(b=>b.type==='text'?b.text:'').join('');
+      }catch(e){throw e;}
+    }
+    // Fallback: prompt browser user for API key
     return new Promise((resolve,reject)=>{
       promptApiKey(async(key)=>{
         try{
@@ -832,7 +861,7 @@ window.onload = function() {
           const data = await res.json();
           resolve(data.content.map(b=>b.type==='text'?b.text:'').join(''));
         }catch(e){reject(e);}
-      });
+      }, function(){ reject(new Error('API key required')); });
     });
   }
   
@@ -1708,7 +1737,13 @@ CROP RECOMMENDATION DATA — When a CropRecommendation result is provided in the
     const q=inp.value.trim();
     if(!q||isChatLoading)return;
 
-    promptApiKey(async(key)=>{
+    // Check: if no gateway and no stored key, show clear error
+    if(!kisanHasGateway && !getApiKey()){
+      addMsg('⚠️ AI is not configured. The server has no AI gateway and no API key was provided. AI Chat is unavailable.','bot');
+      return;
+    }
+
+    async function executeChat(){
       isChatLoading=true;
       const sendBtn=document.getElementById('send-btn');
       sendBtn.disabled=true;
@@ -1771,7 +1806,7 @@ CROP RECOMMENDATION DATA — When a CropRecommendation result is provided in the
             messages:chatHistory.slice(-10)
           })
         });
-  
+
         if(!res.ok){
           const err=await res.json().catch(()=>({}));
           if(res.status===401){
@@ -1804,7 +1839,16 @@ CROP RECOMMENDATION DATA — When a CropRecommendation result is provided in the
       isChatLoading=false;
       sendBtn.disabled=false;
       inp.focus();
-    });
+    } // end executeChat
+
+    // If gateway available, execute directly; otherwise prompt for key
+    if(kisanHasGateway){
+      executeChat();
+    } else {
+      promptApiKey(function(){ executeChat(); }, function(){
+        addMsg('⚠️ AI Chat requires an API key or server-side AI gateway.','bot');
+      });
+    }
   }
   
   function qAsk(q){
@@ -2468,16 +2512,16 @@ CROP RECOMMENDATION DATA — When a CropRecommendation result is provided in the
     document.getElementById('scan-results').style.display = 'block';
     document.getElementById('scan-loading').style.display = 'flex';
     document.getElementById('scan-output').style.display = 'none';
-  
-    promptApiKey(async(key)=>{
-    try {
-      const response = await fetch('/api', {
-        method: 'POST',
-        headers: apiHeaders(),
-        body: JSON.stringify({
-          model: 'claude-haiku-4-5',
-          max_tokens: 1000,
-          system: `You are an expert plant pathologist AI for Indian farmers. Analyze the plant image and respond ONLY with a JSON object (no markdown, no extra text):
+
+    async function executeScan() {
+      try {
+        const response = await fetch('/api', {
+          method: 'POST',
+          headers: apiHeaders(),
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5',
+            max_tokens: 1000,
+            system: `You are an expert plant pathologist AI for Indian farmers. Analyze the plant image and respond ONLY with a JSON object (no markdown, no extra text):
   {
     "healthy": true/false,
     "disease": "disease name or Healthy Plant",
@@ -2490,32 +2534,43 @@ CROP RECOMMENDATION DATA — When a CropRecommendation result is provided in the
     "prevention": ["tip1","tip2","tip3"],
     "urgency": "Immediate/This week/Routine monitoring"
   }`,
-          messages: [{
-            role: 'user',
-            content: [
-              { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: scanImageBase64 } },
-              { type: 'text', text: 'Analyze this plant/crop image for diseases. Respond with JSON only.' }
-            ]
-          }]
-        })
-      });
-      const data = await response.json();
-      let result;
-      try {
-        const text = data.content.map(b => b.text || '').join('');
-        result = JSON.parse(text.replace(/```json|```/g, '').trim());
-      } catch {
-        result = getDemoDisease('generic');
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: scanImageBase64 } },
+                { type: 'text', text: 'Analyze this plant/crop image for diseases. Respond with JSON only.' }
+              ]
+            }]
+          })
+        });
+        const data = await response.json();
+        let result;
+        try {
+          const text = data.content.map(b => b.text || '').join('');
+          result = JSON.parse(text.replace(/```json|```/g, '').trim());
+        } catch {
+          result = getDemoDisease('generic');
+        }
+        document.getElementById('scan-loading').style.display = 'none';
+        document.getElementById('scan-output').style.display = 'block';
+        renderScanResult(result);
+      } catch(err) {
+        document.getElementById('scan-loading').style.display = 'none';
+        document.getElementById('scan-output').innerHTML = '<div class="tip r">⚠️ Scan failed. Please check your API key and try again.</div>';
+        document.getElementById('scan-output').style.display = 'block';
       }
-      document.getElementById('scan-loading').style.display = 'none';
-      document.getElementById('scan-output').style.display = 'block';
-      renderScanResult(result);
-    } catch(err) {
-      document.getElementById('scan-loading').style.display = 'none';
-      document.getElementById('scan-output').innerHTML = '<div class="tip r">⚠️ Scan failed. Please check your API key and try again.</div>';
-      document.getElementById('scan-output').style.display = 'block';
     }
-    }); // end promptApiKey
+
+    // If gateway available, execute directly; otherwise prompt for key
+    if(kisanHasGateway){
+      executeScan();
+    } else {
+      promptApiKey(function(){ executeScan(); }, function(){
+        document.getElementById('scan-loading').style.display = 'none';
+        document.getElementById('scan-output').innerHTML = '<div class="tip r">⚠️ AI Scan requires an API key or server-side AI gateway.</div>';
+        document.getElementById('scan-output').style.display = 'block';
+      });
+    }
   }
   
   function renderScanResult(r) {

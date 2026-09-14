@@ -5,6 +5,12 @@ const path  = require('path');
 
 const PORT = 3001;
 
+// ── Server-side AI gateway (e.g. OmniRoute) ────────────────
+const GATEWAY_URL   = process.env.KISANSARTHI_AI_BASE_URL || '';
+const GATEWAY_TOKEN = process.env.KISANSARTHI_AI_AUTH_TOKEN || '';
+const AI_MODEL      = process.env.KISANSARTHI_AI_MODEL || 'claude-haiku-4-5';
+const HAS_GATEWAY   = !!(GATEWAY_URL && GATEWAY_TOKEN);
+
 const MIME = {
   '.html': 'text/html',
   '.css':  'text/css',
@@ -16,26 +22,49 @@ const MIME = {
   '.ico':  'image/x-icon',
 };
 
-// ── Quick connectivity test to Anthropic on startup ──────────
-function testAnthropicConnection() {
-  console.log('  Testing connection to api.anthropic.com...');
-  const req = https.request(
-    { hostname: 'api.anthropic.com', path: '/v1/models', method: 'GET',
-      headers: { 'anthropic-version': '2023-06-01', 'x-api-key': 'test' } },
-    res => {
-      // 401 = server reachable (key invalid is fine, means internet works)
-      if (res.statusCode === 401 || res.statusCode === 200) {
-        console.log('  ✅ Anthropic API is reachable (status ' + res.statusCode + ')\n');
-      } else {
-        console.log('  ⚠️  Anthropic responded with status ' + res.statusCode + '\n');
+// ── Connectivity test on startup ─────────────────────────────
+function testConnection() {
+  if (HAS_GATEWAY) {
+    console.log('  Testing connection to AI gateway (' + GATEWAY_URL + ')...');
+    const url = new URL(GATEWAY_URL);
+    const mod = url.protocol === 'https:' ? https : http;
+    const req = mod.request(
+      { hostname: url.hostname, port: url.port, path: '/v1/messages', method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01' } },
+      res => {
+        // 401/415 = gateway reachable (auth/config issue is fine, means server is up)
+        if (res.statusCode >= 200 && res.statusCode < 500) {
+          console.log('  ✅ AI gateway is reachable (status ' + res.statusCode + ')\n');
+        } else {
+          console.log('  ⚠️  AI gateway responded with status ' + res.statusCode + '\n');
+        }
       }
-    }
-  );
-  req.on('error', err => {
-    console.error('  ❌ CANNOT REACH api.anthropic.com:', err.message);
-    console.error('  → Check your internet connection or firewall/VPN settings.\n');
-  });
-  req.end();
+    );
+    req.on('error', err => {
+      console.error('  ❌ CANNOT REACH AI gateway at ' + GATEWAY_URL + ':', err.message);
+      console.error('  → AI Chat will require a browser-provided API key as fallback.\n');
+    });
+    req.write(JSON.stringify({ model: AI_MODEL, max_tokens: 5, messages: [{ role: 'user', content: 'test' }] }));
+    req.end();
+  } else {
+    console.log('  Testing connection to api.anthropic.com...');
+    const req = https.request(
+      { hostname: 'api.anthropic.com', path: '/v1/models', method: 'GET',
+        headers: { 'anthropic-version': '2023-06-01', 'x-api-key': 'test' } },
+      res => {
+        if (res.statusCode === 401 || res.statusCode === 200) {
+          console.log('  ✅ Anthropic API is reachable (status ' + res.statusCode + ')\n');
+        } else {
+          console.log('  ⚠️  Anthropic responded with status ' + res.statusCode + ' (browser-provided key needed)\n');
+        }
+      }
+    );
+    req.on('error', err => {
+      console.error('  ❌ CANNOT REACH api.anthropic.com:', err.message);
+      console.error('  → Check your internet connection or firewall/VPN settings.\n');
+    });
+    req.end();
+  }
 }
 
 const server = http.createServer((req, res) => {
@@ -50,6 +79,13 @@ const server = http.createServer((req, res) => {
     console.log('  CORS preflight OK');
     res.writeHead(204);
     res.end();
+    return;
+  }
+
+  // ── Gateway health check (browser polls this) ────────────
+  if (req.method === 'GET' && req.url === '/api/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ gateway: HAS_GATEWAY }));
     return;
   }
 
@@ -93,14 +129,7 @@ const server = http.createServer((req, res) => {
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
-      const apiKey = req.headers['x-api-key'];
-
-      if (!apiKey || !apiKey.startsWith('sk-ant')) {
-        console.log('  REJECTED: missing or invalid key');
-        res.writeHead(401, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: { message: 'Missing or invalid API key.' } }));
-        return;
-      }
+      const browserKey = req.headers['x-api-key'];
 
       // Validate body is proper JSON
       try { JSON.parse(body); } catch(e) {
@@ -110,35 +139,75 @@ const server = http.createServer((req, res) => {
         return;
       }
 
-      console.log('  Forwarding to Anthropic...');
-      const options = {
-        hostname: 'api.anthropic.com',
-        path:     '/v1/messages',
-        method:   'POST',
-        headers: {
-          'Content-Type':      'application/json',
-          'Content-Length':    Buffer.byteLength(body),
-          'x-api-key':         apiKey,
-          'anthropic-version': '2023-06-01',
-        },
-      };
+      if (HAS_GATEWAY) {
+        // ── Gateway mode: forward to server-side AI gateway ──
+        console.log('  Forwarding to AI gateway (' + GATEWAY_URL + ')...');
+        const url = new URL(GATEWAY_URL);
+        const mod = url.protocol === 'https:' ? https : http;
+        const options = {
+          hostname: url.hostname,
+          port:     url.port || (url.protocol === 'https:' ? 443 : 80),
+          path:     '/v1/messages',
+          method:   'POST',
+          headers: {
+            'Content-Type':      'application/json',
+            'Content-Length':    Buffer.byteLength(body),
+            'Authorization':     'Bearer ' + GATEWAY_TOKEN,
+            'anthropic-version': '2023-06-01',
+          },
+        };
 
-      const proxyReq = https.request(options, proxyRes => {
-        console.log('  Anthropic status:', proxyRes.statusCode);
-        res.writeHead(proxyRes.statusCode, { 'Content-Type': 'application/json' });
-        proxyRes.pipe(res);
-      });
+        const proxyReq = mod.request(options, proxyRes => {
+          console.log('  Gateway status:', proxyRes.statusCode);
+          res.writeHead(proxyRes.statusCode, { 'Content-Type': 'application/json' });
+          proxyRes.pipe(res);
+        });
 
-      proxyReq.on('error', err => {
-        console.error('  ❌ Upstream error:', err.message);
-        console.error('  → This means the proxy CANNOT reach api.anthropic.com');
-        console.error('  → Check internet / firewall / VPN on this machine');
-        res.writeHead(502, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: { message: 'Cannot reach Anthropic API: ' + err.message + '. Check internet/firewall on the machine running proxy.js.' } }));
-      });
+        proxyReq.on('error', err => {
+          console.error('  ❌ Gateway error:', err.message);
+          res.writeHead(502, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: { message: 'Cannot reach AI gateway: ' + err.message + '. AI provider may be unavailable.' } }));
+        });
 
-      proxyReq.write(body);
-      proxyReq.end();
+        proxyReq.write(body);
+        proxyReq.end();
+      } else {
+        // ── Direct mode: forward to Anthropic with browser key ──
+        if (!browserKey || !browserKey.startsWith('sk-ant')) {
+          console.log('  REJECTED: missing or invalid key');
+          res.writeHead(401, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: { message: 'Missing or invalid API key.' } }));
+          return;
+        }
+
+        console.log('  Forwarding to Anthropic...');
+        const options = {
+          hostname: 'api.anthropic.com',
+          path:     '/v1/messages',
+          method:   'POST',
+          headers: {
+            'Content-Type':      'application/json',
+            'Content-Length':    Buffer.byteLength(body),
+            'x-api-key':         browserKey,
+            'anthropic-version': '2023-06-01',
+          },
+        };
+
+        const proxyReq = https.request(options, proxyRes => {
+          console.log('  Anthropic status:', proxyRes.statusCode);
+          res.writeHead(proxyRes.statusCode, { 'Content-Type': 'application/json' });
+          proxyRes.pipe(res);
+        });
+
+        proxyReq.on('error', err => {
+          console.error('  ❌ Upstream error:', err.message);
+          res.writeHead(502, { 'Content-Type': 'application/json' });
+          res.end(JSON.stringify({ error: { message: 'Cannot reach Anthropic API: ' + err.message + '. Check internet/firewall on the machine running proxy.js.' } }));
+        });
+
+        proxyReq.write(body);
+        proxyReq.end();
+      }
     });
     return;
   }
@@ -164,6 +233,11 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, () => {
   console.log('\n  ✅ KisanAI proxy running!');
   console.log('  Open http://localhost:' + PORT);
-  console.log('  Diagnose at http://localhost:' + PORT + '/test\n');
-  testAnthropicConnection();
+  console.log('  Diagnose at http://localhost:' + PORT + '/test');
+  if (HAS_GATEWAY) {
+    console.log('  AI mode: Server-side gateway (' + GATEWAY_URL + ')\n');
+  } else {
+    console.log('  AI mode: Direct Anthropic (browser-provided key required)\n');
+  }
+  testConnection();
 });
