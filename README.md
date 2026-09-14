@@ -1,78 +1,144 @@
-# 🌾 KisanSarthi — AI Agricultural Assistant
+# 🌾 KisanSarthi
 
-> Helping Indian farmers with crop prices, disease detection & farming advice powered by AI
+> AI-powered agricultural intelligence platform for Indian farmers — real-time crop prices, ML forecasting, plant disease detection, and personalized farming advice.
 
 ## 👥 Team
-| Name | Role |
-|------|------|
-| Saurabh | Frontend Developer (HTML, CSS, JavaScript, UI/UX) |
-| Rahul | Data Analyst (Python, ML Price Forecasting, Data Pipeline) |
 
-## 📌 About the Project
-KisanSarthi is an AI-powered web application designed for Indian farmers.
-It provides real-time crop price trends, 30-day price forecasting,
-plant disease detection, and farming advice — all in one place.
+| Name |
+|------|
+| Aradhya Maheshwari |
+| Rahul |
+
+## 📌 About
+
+KisanSarthi is an AI-driven web application built for Indian farmers. It combines real-time APMC market data, machine learning price forecasts, AI-powered plant disease detection, and a conversational farming assistant — all in a single, mobile-friendly interface with bilingual support (English/Hindi).
+
+## 🎯 Key Features
+
+- **Live Mandi Prices** — Real-time crop prices for 28+ crops sourced from APMC market data, with interactive trend charts and 7-day moving averages
+- **30-Day Price Forecast** — Linear Regression model (scikit-learn) projects crop prices 30 days ahead, helping farmers plan sowing and selling
+- **Plant Disease Detection** — Upload a photo of a diseased plant; Claude Vision API identifies the disease and recommends treatment
+- **AI Farming Assistant** — Conversational chatbot (Claude AI) answers questions about crops, soil, weather, pests, and government schemes
+- **Market Insights** — Per-crop analysis including price trends, volatility, historical range, and contextual observations
+- **Bilingual Support** — Full English/Hindi language toggle for accessibility across regions
+- **Dark Mode** — Automatic theme adaptation based on system preferences
+- **Mobile Responsive** — Optimized layout for phones, tablets, and desktops
 
 ## 📁 Project Structure
-| File | Description |
-|------|-------------|
-| index.html | Main frontend UI |
-| style.css | Styling and responsive design |
-| app.js | Frontend logic and Claude AI API integration |
-| proxy.js | Node.js proxy server for API calls |
-| script.py | Python data pipeline (cleaning + forecasting) |
-| price_data.json | Processed crop price dataset (output of script) |
 
-## 🔬 Data Analysis (by Rahul)
-- Collected and processed real **APMC market crop price data**
-- Cleaned data — handled missing values and duplicates using **Pandas**
-- Removed price outliers using **IQR (Interquartile Range)** method
-- Built **30-day price forecast** using **Linear Regression (Scikit-learn)**
-- Analyzed **60-day historical price trends** across multiple crops
-- Exported structured **JSON data** consumed by the frontend
-
-## 🎨 Frontend (by Saurabh)
-- Built complete UI using **HTML, CSS, JavaScript**
-- Integrated **Claude AI API** for farming advice and disease detection
-- Responsive design for mobile and desktop
-- Real-time crop price display with charts
+```
+KisanSarthi/
+├── index.html          # Main frontend — single-page app UI
+├── style.css           # Responsive styling, dark mode, animations
+├── app.js              # Frontend logic, AI integration, chart rendering
+├── proxy.js            # Node.js reverse proxy for Claude API (CORS)
+├── script.py           # Python data pipeline — cleaning + ML forecasting
+├── price_data.json     # Processed crop price dataset (pipeline output)
+├── package.json        # Node.js project config and scripts
+├── requirements.txt    # Python dependencies
+└── .gitignore          # Ignored files and directories
+```
 
 ## 🛠 Tech Stack
-| Technology | Used For |
-|------------|----------|
-| Python | Data analysis and forecasting |
-| Pandas & NumPy | Data cleaning and processing |
-| Scikit-learn | Linear Regression price forecast |
-| HTML/CSS/JS | Frontend UI |
-| Claude AI API | AI farming assistant |
-| Node.js | Proxy server |
 
-## 🚀 How to Run
-1. Install Node.js
-2. Run `node proxy.js` to start the server
-3. Open `http://localhost:3001` in browser
-4. Enter your Anthropic API key when prompted
+| Layer | Technology |
+|-------|------------|
+| Frontend | HTML5, CSS3, Vanilla JavaScript |
+| Charts | Chart.js (price trends, moving averages, forecast lines) |
+| AI / ML | Claude AI API (Haiku 4.5) — chat, disease detection via Vision |
+| Data Pipeline | Python, Pandas, NumPy, Scikit-learn (LinearRegression) |
+| Server | Node.js reverse proxy (CORS handling for API calls) |
+| Data Source | APMC market crop price datasets |
 
-## 📊 Data Pipeline
-Raw APMC CSV Data
-↓
-Clean & Remove Outliers (IQR)
-↓
-Calculate 7-day avg, 30-day change %
-↓
-Linear Regression Forecast (30 days)
-↓
-Export to price_data.json
-↓
-Frontend displays live price charts
-## 🎯 Key Features
-- 📈 Real-time crop price trends
-- 🔮 30-day price forecasting using ML
-- 🌿 Plant disease detection via AI
-- 💬 Farming advice chatbot
-- 📱 Mobile responsive design
+## 🔬 Data Pipeline
 
-## 🏫 Project Info
-- **Type:** BCA Student Project
-- **Domain:** AI + Data Analytics + AgriTech
-- **Target Users:** Indian Farmers
+```
+Raw APMC CSV Data (dataset.csv)
+        ↓
+Load & Validate (Pandas)
+        ↓
+Clean: drop NaN, remove duplicates
+        ↓
+Remove Outliers (IQR method)
+        ↓
+Calculate 7-day moving average, 30-day % change
+        ↓
+Linear Regression Forecast (30 days ahead, scikit-learn)
+        ↓
+Export to price_data.json (28 crops, 60-record history each)
+        ↓
+Frontend renders live charts, forecasts, and insights
+```
+
+## 🚀 Setup & Running
+
+### Prerequisites
+- **Node.js** (v14 or later)
+- **Python 3.8+** (for data pipeline)
+- **Anthropic API key** (for AI features)
+
+### Steps
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/KisanSarthi.git
+   cd KisanSarthi
+   ```
+
+2. **Install Node.js dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Install Python dependencies** (for data pipeline)
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Run the application**
+   ```bash
+   npm start
+   ```
+   This starts the proxy server on **http://localhost:3001**. Open it in your browser.
+
+5. **Enter your Anthropic API key** when prompted in the app to enable AI features (chat and disease detection).
+
+### Data Pipeline (Optional)
+
+To regenerate `price_data.json` from a fresh APMC dataset:
+
+```bash
+python script.py --csv path/to/dataset.csv
+```
+
+If no `dataset.csv` is provided, the existing `price_data.json` continues to work with the frontend.
+
+## 📊 Analytics & Intelligence
+
+| Capability | Details |
+|------------|---------|
+| Price Data | 28 crops with up to 60 historical data points each |
+| Forecasting | 30-day Linear Regression projection per crop |
+| Trend Analysis | 7-day moving average, 30-day percentage change |
+| Outlier Handling | IQR-based removal during pipeline processing |
+| Market Context | Per-crop insights: price range, trend direction, volatility |
+| Disease Detection | Image-based plant disease identification via Claude Vision |
+
+## 🗺 Roadmap
+
+- [ ] Real-time price updates via live APMC data feeds
+- [ ] Improved forecasting with advanced ML models (Random Forest, LSTM)
+- [ ] Weather integration for location-specific farming advice
+- [ ] Government scheme eligibility checker
+- [ ] Multi-language support beyond English and Hindi
+- [ ] Offline mode with cached data
+- [ ] Farmer community features and knowledge sharing
+
+## 📄 License
+
+This project is a BCA student project for academic purposes.
+
+---
+
+**Domain:** AI + Data Analytics + AgriTech
+**Target Users:** Indian Farmers
