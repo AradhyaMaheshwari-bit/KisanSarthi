@@ -20,6 +20,7 @@ KisanSarthi is an AI-driven web application built for Indian farmers. It combine
 - **Plant Disease Detection** — Upload a photo of a diseased plant; Claude Vision API identifies the disease and recommends treatment
 - **AI Farming Assistant** — Conversational chatbot (Claude AI) answers questions about crops, soil, weather, pests, and government schemes
 - **Market Insights** — Per-crop analysis including price trends, volatility, historical range, and contextual observations
+- **Data Analytics** — Statistical analysis across 28 crops: trend detection, volatility measurement, anomaly identification, crop rankings, and data quality reporting
 - **Bilingual Support** — Full English/Hindi language toggle for accessibility across regions
 - **Dark Mode** — Automatic theme adaptation based on system preferences
 - **Mobile Responsive** — Optimized layout for phones, tablets, and desktops
@@ -30,6 +31,7 @@ KisanSarthi is an AI-driven web application built for Indian farmers. It combine
 KisanSarthi/
 ├── index.html          # Main frontend — single-page app UI
 ├── style.css           # Responsive styling, dark mode, animations
+├── analytics.js        # Agricultural analytics engine (standalone module)
 ├── app.js              # Frontend logic, AI integration, chart rendering
 ├── proxy.js            # Node.js reverse proxy for Claude API (CORS)
 ├── script.py           # Python data pipeline — cleaning + ML forecasting
@@ -118,16 +120,21 @@ If no `dataset.csv` is provided, the existing `price_data.json` continues to wor
 | Capability | Details |
 |------------|---------|
 | Price Data | 28 crops with up to 60 historical data points each |
+| Statistical Analysis | Mean, median, min/max, range, date coverage per crop |
+| Trend Detection | Rising/falling/stable classification with confidence levels |
+| Volatility Analysis | Coefficient of Variation with stable/moderate/volatile thresholds |
+| Anomaly Detection | Z-score method identifying statistically unusual price points |
+| Crop Rankings | Top gainers, losers, most volatile, most stable |
+| Data Quality | Per-crop sufficiency indicators, sparse data detection |
 | Forecasting | 30-day Linear Regression projection per crop |
-| Trend Analysis | 7-day moving average, 30-day percentage change |
-| Outlier Handling | IQR-based removal during pipeline processing |
 | Market Context | Per-crop insights: price range, trend direction, volatility |
 | Disease Detection | Image-based plant disease identification via Claude Vision |
 
 ## 🗺 Roadmap
 
-- [ ] Real-time price updates via live APMC data feeds
+- [x] Agricultural data analytics (statistics, trends, volatility, anomalies, rankings)
 - [ ] Improved forecasting with advanced ML models (Random Forest, LSTM)
+- [ ] Real-time price updates via live APMC data feeds
 - [ ] Weather integration for location-specific farming advice
 - [ ] Government scheme eligibility checker
 - [ ] Multi-language support beyond English and Hindi
