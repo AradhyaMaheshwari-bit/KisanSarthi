@@ -401,7 +401,11 @@ window.onload = function() {
     const pg=document.getElementById('page-'+id);
     if(pg){pg.classList.add('on');pg.style.display='block';}
     if(btn&&btn.classList) btn.classList.add('on');
-    if(id==='prices') setTimeout(initPriceChart,100);
+    if(id==='prices' && PRICE_DATA && !priceChartInst) {
+      // Auto-select first crop on initial visit
+      const firstKey = Object.keys(PRICE_DATA)[0];
+      if (firstKey) setTimeout(() => selectCrop(firstKey), 100);
+    }
   }
   
   /* ═══════════════════════════════════════════════════════
@@ -685,15 +689,7 @@ window.onload = function() {
      PRICES PAGE
   ══════════════════════════════════════════════════════ */
   // ── Dynamic price rendering from PRICE_DATA ─────────────
-  let activeCat = 'all';
   let selectedCropKey = null;
-
-  function filterCat(cat, chip) {
-    activeCat = cat;
-    document.querySelectorAll('.fchip').forEach(c => c.classList.remove('on'));
-    chip.classList.add('on');
-    renderPrices();
-  }
 
   function renderPrices() {
     const list = document.getElementById('price-list');
@@ -783,7 +779,6 @@ window.onload = function() {
     if (forecast != null) {
       const lastPrice = prices[prices.length - 1];
       const forecastPts = Array(prices.length - 1).fill(null).concat([lastPrice, forecast]);
-      const forecastLabels = labels.concat(['+30d']);
       datasets.push({
         label: 'Forecast (Predicted)',
         data: forecastPts,
