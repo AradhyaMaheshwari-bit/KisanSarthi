@@ -6,9 +6,9 @@ const path  = require('path');
 const PORT = 3001;
 
 // ── Server-side AI gateway (e.g. OmniRoute) ────────────────
-const GATEWAY_URL   = process.env.KISANSARTHI_AI_BASE_URL || '';
-const GATEWAY_TOKEN = process.env.KISANSARTHI_AI_AUTH_TOKEN || '';
-const AI_MODEL      = process.env.KISANSARTHI_AI_MODEL || 'claude-haiku-4-5';
+const GATEWAY_URL   = process.env.KISANSARTHI_AI_BASE_URL || process.env.ANTHROPIC_BASE_URL || '';
+const GATEWAY_TOKEN = process.env.KISANSARTHI_AI_AUTH_TOKEN || process.env.ANTHROPIC_AUTH_TOKEN || '';
+const AI_MODEL      = process.env.KISANSARTHI_AI_MODEL || 'auto/multimodal';
 const HAS_GATEWAY   = !!(GATEWAY_URL && GATEWAY_TOKEN);
 
 const MIME = {
@@ -141,7 +141,18 @@ const server = http.createServer((req, res) => {
 
       if (HAS_GATEWAY) {
         // ── Gateway mode: forward to server-side AI gateway ──
-        console.log('  Forwarding to AI gateway (' + GATEWAY_URL + ')...');
+        // Override the model with server-configured AI_MODEL (frontend may send
+        // a model name that the gateway doesn't recognise).
+        let gwBody = body;
+        try {
+          const parsed = JSON.parse(body);
+          if (parsed.model !== AI_MODEL) {
+            parsed.model = AI_MODEL;
+            gwBody = JSON.stringify(parsed);
+          }
+        } catch(_) { /* body already validated above */ }
+
+        console.log('  Forwarding to AI gateway (' + GATEWAY_URL + ', model=' + AI_MODEL + ')...');
         const url = new URL(GATEWAY_URL);
         const mod = url.protocol === 'https:' ? https : http;
         const options = {
@@ -151,7 +162,7 @@ const server = http.createServer((req, res) => {
           method:   'POST',
           headers: {
             'Content-Type':      'application/json',
-            'Content-Length':    Buffer.byteLength(body),
+            'Content-Length':    Buffer.byteLength(gwBody),
             'Authorization':     'Bearer ' + GATEWAY_TOKEN,
             'anthropic-version': '2023-06-01',
           },
@@ -169,7 +180,7 @@ const server = http.createServer((req, res) => {
           res.end(JSON.stringify({ error: { message: 'Cannot reach AI gateway: ' + err.message + '. AI provider may be unavailable.' } }));
         });
 
-        proxyReq.write(body);
+        proxyReq.write(gwBody);
         proxyReq.end();
       } else {
         // ── Direct mode: forward to Anthropic with browser key ──
